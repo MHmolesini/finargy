@@ -1,0 +1,18 @@
+{
+  "S17L6": {
+    "tipo_activo": "lecap",
+    "fecha_vencimiento": "2026-07-17"
+  },
+  "X15Y6": {
+    "tipo_activo": "lecer",
+    "fecha_vencimiento": "2026-05-15"
+  },
+  "S31G6": {
+    "tipo_activo": "lecap",
+    "fecha_vencimiento": "2026-08-31"
+  },
+  "X31L6": {
+    "tipo_activo": "lecer",
+    "fecha_vencimiento": "2026-07-31"
+  }
+}
