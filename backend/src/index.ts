@@ -42,11 +42,31 @@ app.get('/api/notes', async (req: Request, res: Response) => {
     const metadata = getMetadata();
 
     // Enriquecer datos
-    const enrichedData = liveData.map((note: any) => ({
-      ...note,
-      tipo_activo: metadata[note.symbol]?.tipo_activo || 'otros',
-      fecha_vencimiento: metadata[note.symbol]?.fecha_vencimiento || null
-    }));
+    const enrichedData = liveData.map((note: any) => {
+      const meta = metadata[note.symbol];
+      let precio_final_estimado = null;
+
+      if (meta?.fecha_emision && meta?.fecha_vencimiento && meta?.tasa_licitacion) {
+        const emision = new Date(meta.fecha_emision);
+        const vencimiento = new Date(meta.fecha_vencimiento);
+        emision.setHours(0,0,0,0);
+        vencimiento.setHours(0,0,0,0);
+        
+        const diffTime = vencimiento.getTime() - emision.getTime();
+        const diasReales = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        
+        // T+1: Calculamos al día previo al vencimiento real
+        const diasCalc = Math.max(0, diasReales - 1);
+        precio_final_estimado = 100 * Math.pow((1 + meta.tasa_licitacion), diasCalc / 30.0);
+      }
+
+      return {
+        ...note,
+        tipo_activo: meta?.tipo_activo || 'otros',
+        fecha_vencimiento: meta?.fecha_vencimiento || null,
+        precio_final_estimado: precio_final_estimado
+      };
+    });
 
     res.json(enrichedData);
   } catch (error) {
