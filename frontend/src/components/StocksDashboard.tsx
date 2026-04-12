@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import StocksTable, { Stock } from './StocksTable';
 import StocksSunburst from './StocksSunburst';
+import StocksHeatmap from './StocksHeatmap';
 
 const StocksDashboard = () => {
   const [data, setData] = useState<Stock[]>([]);
@@ -73,10 +74,15 @@ const StocksDashboard = () => {
       </div>
 
       {/* RENTA VARIABLE VISUALIZATIONS */}
-      <div className="dashboard-content flex flex-col gap-6">
+      <div className="dashboard-content grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Gráfico Sunburst Analítico de Ecosistemas */}
         <StocksSunburst stocks={data} />
 
+        {/* Gráfico Treemap Térmico */}
+        <StocksHeatmap stocks={data} />
+      </div>
+
+      <div className="dashboard-content">
         {/* Tabla de Instrumentos Base */}
         <StocksTable stocks={data} />
       </div>
