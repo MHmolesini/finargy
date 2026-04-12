@@ -10,7 +10,7 @@ export default function CedearsPage() {
   return (
     <main className="p-4 md:p-8">
       <StocksDashboard 
-        apiEndpoint="http://localhost:3001/api/cedears"
+        apiEndpoint="cedears"
         title="Monitor de CEDEARs"
         subtitle="Certificados de Depósito Argentino. Cotizaciones en vivo (BYMA)."
       />

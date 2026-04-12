@@ -13,7 +13,7 @@ export default function StocksPage() {
       </header>
 
       <section style={{ marginTop: '2rem' }}>
-        <StocksDashboard />
+        <StocksDashboard apiEndpoint="stocks" />
       </section>
     </div>
   );

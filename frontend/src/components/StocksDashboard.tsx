@@ -7,6 +7,7 @@ import StocksHeatmap from './StocksHeatmap';
 import StocksScatter from './StocksScatter';
 import StocksHistoricalChart from './StocksHistoricalChart';
 import { RefreshCw, Filter, ChevronDown, Check, Search, X } from 'lucide-react';
+import { fetchMarketData } from '@/utils/supabase';
 
 interface StocksDashboardProps {
   apiEndpoint?: string;
@@ -54,15 +55,21 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
   const fetchStocks = async () => {
     try {
       setIsSyncing(true);
-      const response = await fetch(apiEndpoint);
-      if (!response.ok) {
-        throw new Error('Error al cargar datos de rentabilidad variable.');
+      let jsonData;
+      
+      // Si el endpoint no es una URL completa (http...), asumimos que es un tipo para Supabase
+      if (apiEndpoint && !apiEndpoint.startsWith('http')) {
+        jsonData = await fetchMarketData(apiEndpoint);
+      } else {
+        const response = await fetch(apiEndpoint);
+        if (!response.ok) throw new Error('Error al cargar datos.');
+        jsonData = await response.json();
       }
-      const jsonData = await response.json();
+
       setData(jsonData);
       setError(null);
     } catch (err: any) {
-      // Ignorar advertencias silenciosas de polling sin tirar abajo la app web
+      // Ignorar advertencias de polling si ya hay datos
       if (data.length === 0) setError(err.message || 'Error de conexión');
     } finally {
       setLoading(false);
@@ -75,9 +82,15 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
     
     const initialFetch = async () => {
       try {
-        const response = await fetch(apiEndpoint);
-        if (!response.ok) throw new Error('Error al cargar datos.');
-        const jsonData = await response.json();
+        let jsonData;
+        if (apiEndpoint && !apiEndpoint.startsWith('http')) {
+          jsonData = await fetchMarketData(apiEndpoint);
+        } else {
+          const response = await fetch(apiEndpoint);
+          if (!response.ok) throw new Error('Error al cargar datos.');
+          jsonData = await response.json();
+        }
+
         if (isMounted) {
           setData(jsonData);
           setError(null);

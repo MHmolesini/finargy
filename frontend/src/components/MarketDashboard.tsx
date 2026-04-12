@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import NotesTable from './NotesTable';
 import YieldCurveChart from './YieldCurveChart';
 import MarketHeatmap from './MarketHeatmap';
+import { fetchMarketData } from '@/utils/supabase';
 
 export interface BaseNote {
   symbol: string;
@@ -42,19 +43,16 @@ const MarketDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [notesRes, bondsRes] = await Promise.all([
-        fetch('http://localhost:3001/api/notes'),
-        fetch('http://localhost:3001/api/bonds')
+      const [notesJson, bondsJson] = await Promise.all([
+        fetchMarketData('notes'),
+        fetchMarketData('bonds')
       ]);
-      if (!notesRes.ok || !bondsRes.ok) throw new Error('Error al conectar con el backend');
-      const notesJson = await notesRes.json();
-      const bondsJson = await bondsRes.json();
       setNotesData(notesJson);
       setBondsData(bondsJson);
       setLoading(false);
     } catch (err) {
       console.error(err);
-      setError('No se pudo cargar la información. Asegúrate de que el backend esté corriendo.');
+      setError('Problema al conectar con la nube de datos.');
       setLoading(false);
     }
   };
