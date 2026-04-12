@@ -148,9 +148,9 @@ const MarketDashboard = () => {
               transition: 'all 0.2s',
               cursor: 'pointer',
               border: 'none',
-              backgroundColor: activeMarket === 'letras' ? '#10B981' : 'transparent',
+              backgroundColor: activeMarket === 'letras' ? '#059669' : 'transparent',
               color: activeMarket === 'letras' ? '#fff' : 'var(--text-dim)',
-              boxShadow: activeMarket === 'letras' ? '0 0 15px rgba(16, 185, 129, 0.4)' : 'none'
+              boxShadow: activeMarket === 'letras' ? '0 0 15px rgba(5, 150, 105, 0.4)' : 'none'
             }}
             onMouseOver={(e) => { if(activeMarket !== 'letras') e.currentTarget.style.color = '#fff' }}
             onMouseOut={(e) => { if(activeMarket !== 'letras') e.currentTarget.style.color = 'var(--text-dim)' }}
@@ -167,9 +167,9 @@ const MarketDashboard = () => {
               transition: 'all 0.2s',
               cursor: 'pointer',
               border: 'none',
-              backgroundColor: activeMarket === 'bonos' ? '#3B82F6' : 'transparent',
+              backgroundColor: activeMarket === 'bonos' ? '#2563EB' : 'transparent',
               color: activeMarket === 'bonos' ? '#fff' : 'var(--text-dim)',
-              boxShadow: activeMarket === 'bonos' ? '0 0 15px rgba(59, 130, 246, 0.4)' : 'none'
+              boxShadow: activeMarket === 'bonos' ? '0 0 15px rgba(37, 99, 235, 0.4)' : 'none'
             }}
             onMouseOver={(e) => { if(activeMarket !== 'bonos') e.currentTarget.style.color = '#fff' }}
             onMouseOut={(e) => { if(activeMarket !== 'bonos') e.currentTarget.style.color = 'var(--text-dim)' }}
