@@ -98,100 +98,108 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
 
   const getSectorColor = (sector: string) => {
     switch (sector) {
-      case 'Servicios Financieros': 
+      case 'Servicios Financieros':
       case 'Finanzas': return { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' }; // Emerald
-      
-      case 'Energia': 
+
+      case 'Energia':
       case 'Minerales energéticos': return { bg: 'rgba(245, 158, 11, 0.15)', text: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' }; // Amber
-      
-      case 'Materiales': 
+
+      case 'Materiales':
       case 'Minerales no energéticos': return { bg: 'rgba(99, 102, 241, 0.15)', text: '#818cf8', border: 'rgba(99, 102, 241, 0.3)' }; // Indigo
-      
-      case 'Servicios Publicos': 
+
+      case 'Servicios Publicos':
       case 'Servicios públicos': return { bg: 'rgba(6, 182, 212, 0.15)', text: '#22d3ee', border: 'rgba(6, 182, 212, 0.3)' }; // Cyan
-      
-      case 'Consumo Basico': 
-      case 'Consumo no cíclico': 
+
+      case 'Consumo Basico':
+      case 'Consumo no cíclico':
       case 'Consumibles perecederos': return { bg: 'rgba(236, 72, 153, 0.15)', text: '#f472b6', border: 'rgba(236, 72, 153, 0.3)' }; // Pink
-      
-      case 'Consumo Discrecional': 
-      case 'Servicios al consumidor': 
-      case 'Bienes de consumo duraderos': 
+
+      case 'Consumo Discrecional':
+      case 'Servicios al consumidor':
+      case 'Bienes de consumo duraderos':
       case 'Comercio minorista': return { bg: 'rgba(168, 85, 247, 0.15)', text: '#c084fc', border: 'rgba(168, 85, 247, 0.3)' }; // Purple
-      
-      case 'Industriales': 
-      case 'Servicios industriales': 
+
+      case 'Industriales':
+      case 'Servicios industriales':
       case 'Fabricación de productos': return { bg: 'rgba(100, 116, 139, 0.15)', text: '#94a3b8', border: 'rgba(100, 116, 139, 0.3)' }; // Slate
-      
+
       case 'Comunicaciones': return { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' }; // Blue
       case 'Bienes Raices': return { bg: 'rgba(20, 184, 166, 0.15)', text: '#2dd4bf', border: 'rgba(20, 184, 166, 0.3)' }; // Teal
-      
-      case 'Tecnologia': 
+
+      case 'Tecnologia':
       case 'Servicios tecnológicos': return { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' }; // Red
-      
-      case 'Salud': 
-      case 'Tecnologías sanitarias': 
+
+      case 'Salud':
+      case 'Tecnologías sanitarias':
       case 'Tecnología de la salud': return { bg: 'rgba(132, 204, 22, 0.15)', text: '#a3e635', border: 'rgba(132, 204, 22, 0.3)' }; // Lime
 
       case 'Transporte': return { bg: 'rgba(234, 179, 8, 0.15)', text: '#facc15', border: 'rgba(234, 179, 8, 0.3)' }; // Yellow
       case 'Servicios de distribución': return { bg: 'rgba(249, 115, 22, 0.15)', text: '#fb923c', border: 'rgba(249, 115, 22, 0.3)' }; // Orange
       case 'Industrias de proceso': return { bg: 'rgba(161, 161, 170, 0.15)', text: '#a1a1aa', border: 'rgba(161, 161, 170, 0.3)' }; // Zinc
-      
+
       default: return { bg: 'rgba(255, 255, 255, 0.05)', text: '#cbd5e1', border: 'rgba(255, 255, 255, 0.1)' }; // Default Gray
     }
   };
 
   return (
     <div className="premium-table-container animate-fade-in">
-      <div style={{ overflowX: 'auto', position: 'relative' }}>
+      <div className="custom-scrollbar" style={{ 
+        overflowX: 'auto', 
+        overflowY: 'auto', 
+        maxHeight: '75vh', 
+        position: 'relative'
+      }}>
         <table className="premium-table">
-          <thead>
-            <tr>
-              <th onClick={() => requestSort('sector')} style={{ paddingLeft: '1.5rem', width: '140px' }}>Sector {getSortIcon('sector')}</th>
-              <th onClick={() => requestSort('industria')} style={{ width: '160px' }}>Industria {getSortIcon('industria')}</th>
-              <th className="sticky-col" onClick={() => requestSort('symbol')}>Símbolo {getSortIcon('symbol')}</th>
-              <th onClick={() => requestSort('c')}>Último {getSortIcon('c')}</th>
-              <th onClick={() => requestSort('pct_change')}>Variación {getSortIcon('pct_change')}</th>
-              <th colSpan={2} style={{ textAlign: 'center', borderRight: '1px solid var(--border-color)', cursor: 'default' }}>Compra (Bid)</th>
-              <th colSpan={2} style={{ textAlign: 'center', cursor: 'default' }}>Venta (Ask)</th>
-              <th style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)' }} onClick={() => requestSort('spread')}>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 30 }}>
+            <tr style={{ position: 'sticky', top: 0, zIndex: 31 }}>
+              <th onClick={() => requestSort('sector')} style={{ paddingLeft: '1.5rem', width: '140px', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Sector {getSortIcon('sector')}</th>
+              <th onClick={() => requestSort('industria')} style={{ width: '160px', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Industria {getSortIcon('industria')}</th>
+              <th className="sticky-col" onClick={() => requestSort('symbol')} style={{ position: 'sticky', top: 0, left: 0, backgroundColor: '#0a0a0a', zIndex: 40 }}>Símbolo {getSortIcon('symbol')}</th>
+              <th onClick={() => requestSort('c')} style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Último {getSortIcon('c')}</th>
+              <th onClick={() => requestSort('pct_change')} style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Variación {getSortIcon('pct_change')}</th>
+              <th colSpan={2} style={{ textAlign: 'center', borderRight: '1px solid var(--border-color)', cursor: 'default', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Compra (Bid)</th>
+              <th colSpan={2} style={{ textAlign: 'center', cursor: 'default', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Venta (Ask)</th>
+              <th style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('spread')}>
                 Spread % {getSortIcon('spread')}
               </th>
-              <th style={{ borderLeft: '1px solid var(--border-color)' }} onClick={() => requestSort('v')}>
+              <th style={{ borderLeft: '1px solid var(--border-color)', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('v')}>
                 Volumen {getSortIcon('v')}
               </th>
-              <th onClick={() => requestSort('vol_monto')}>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('vol_monto')}>
                 Volumen $ {getSortIcon('vol_monto')}
               </th>
-              <th onClick={() => requestSort('q_op')}>Ops {getSortIcon('q_op')}</th>
-              <th style={{ textAlign: 'right' }} onClick={() => requestSort('avgTicket')}>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('q_op')}>Ops {getSortIcon('q_op')}</th>
+              <th style={{ textAlign: 'right', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('avgTicket')}>
                 Ticket Prom. {getSortIcon('avgTicket')}
               </th>
             </tr>
-            <tr style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.01)', cursor: 'default' }}>
-              <th style={{ cursor: 'default' }}></th>
-              <th style={{ cursor: 'default' }}></th>
-              <th className="sticky-col" style={{ cursor: 'default' }}></th>
-              <th colSpan={2} style={{ cursor: 'default' }}></th>
-              <th style={{ padding: '0.5rem 1.5rem' }} onClick={() => requestSort('q_bid')}>Cant. {getSortIcon('q_bid')}</th>
-              <th style={{ padding: '0.5rem 1.5rem', borderRight: '1px solid var(--border-color)' }} onClick={() => requestSort('px_bid')}>Prc. {getSortIcon('px_bid')}</th>
-              <th style={{ padding: '0.5rem 1.5rem' }} onClick={() => requestSort('px_ask')}>Prc. {getSortIcon('px_ask')}</th>
-              <th style={{ padding: '0.5rem 1.5rem' }} onClick={() => requestSort('q_ask')}>Cant. {getSortIcon('q_ask')}</th>
-              <th colSpan={5} style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default' }}></th>
+            <tr style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.01)', cursor: 'default', position: 'sticky', top: '45px', zIndex: 31 }}>
+              <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th className="sticky-col" style={{ cursor: 'default', position: 'sticky', top: '45px', left: 0, backgroundColor: '#0a0a0a', zIndex: 40 }}></th>
+              <th colSpan={2} style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th style={{ padding: '0.5rem 1.5rem', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('q_bid')}>Cant. {getSortIcon('q_bid')}</th>
+              <th style={{ padding: '0.5rem 1.5rem', borderRight: '1px solid var(--border-color)', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('px_bid')}>Prc. {getSortIcon('px_bid')}</th>
+              <th style={{ padding: '0.5rem 1.5rem', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('px_ask')}>Prc. {getSortIcon('px_ask')}</th>
+              <th style={{ padding: '0.5rem 1.5rem', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('q_ask')}>Cant. {getSortIcon('q_ask')}</th>
+              <th colSpan={5} style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
             </tr>
           </thead>
           {Object.entries(groupedStocks).map(([category, items]) => (
             <React.Fragment key={category}>
               <tbody>
-                <tr style={{ background: 'rgba(255,255,255,0.03)', cursor: 'default' }}>
-                  <td colSpan={14} style={{ 
-                    padding: '0.6rem 1.5rem', 
-                    fontSize: '0.8rem', 
-                    fontWeight: 'bold', 
+                <tr style={{ background: 'rgba(255,255,255,0.03)', cursor: 'default', position: 'sticky', top: '80px', zIndex: 25 }}>
+                  <td colSpan={14} style={{
+                    padding: '0.6rem 1.5rem',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold',
                     color: category === 'ETFs' ? '#38bdf8' : 'var(--accent-color)', // Sky blue para ETFs, Accent para Acciones
                     letterSpacing: '0.1em',
                     borderBottom: '1px solid var(--border-color)',
-                    background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%)'
+                    background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%)',
+                    position: 'sticky',
+                    top: '80px',
+                    zIndex: 25
                   }}>
                     {category.toUpperCase()}
                   </td>
@@ -240,7 +248,7 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
                       </td>
 
                       <td className="sticky-col" style={{ fontWeight: 600, color: '#fff' }}>{stock.symbol}</td>
-                      
+
                       <td style={{ fontWeight: 500 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           {stock.c?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
@@ -265,7 +273,7 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
                       <td className={(stock.pct_change || 0) >= 0 ? 'text-success' : 'text-danger'} style={{ fontWeight: 500 }}>
                         {stock.pct_change > 0 ? '+' : ''}{stock.pct_change?.toFixed(2)}%
                       </td>
-                      
+
                       <td className="text-dim" style={{ padding: '1rem 0.7rem' }}>{stock.q_bid?.toLocaleString('es-AR')}</td>
                       <td style={{ borderRight: '1px solid var(--border-color)', padding: '1rem 0.7rem' }}>
                         {stock.px_bid?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
