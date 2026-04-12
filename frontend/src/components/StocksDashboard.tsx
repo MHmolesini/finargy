@@ -7,7 +7,17 @@ import StocksHeatmap from './StocksHeatmap';
 import StocksScatter from './StocksScatter';
 import { RefreshCw, Filter, ChevronDown, Check } from 'lucide-react';
 
-const StocksDashboard = () => {
+interface StocksDashboardProps {
+  apiEndpoint?: string;
+  title?: string;
+  subtitle?: string;
+}
+
+const StocksDashboard: React.FC<StocksDashboardProps> = ({ 
+  apiEndpoint = 'http://localhost:3001/api/stocks', 
+  title = 'Monitor de Renta Variable', 
+  subtitle = 'Cotizaciones en vivo del Panel Líder y General (BYMA).' 
+}) => {
   const [data, setData] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -37,7 +47,7 @@ const StocksDashboard = () => {
   const fetchStocks = async () => {
     try {
       setIsSyncing(true);
-      const response = await fetch('http://localhost:3001/api/stocks');
+      const response = await fetch(apiEndpoint);
       if (!response.ok) {
         throw new Error('Error al cargar datos de rentabilidad variable.');
       }
@@ -58,7 +68,7 @@ const StocksDashboard = () => {
     
     const initialFetch = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/stocks');
+        const response = await fetch(apiEndpoint);
         if (!response.ok) throw new Error('Error al cargar datos.');
         const jsonData = await response.json();
         if (isMounted) {
@@ -188,10 +198,10 @@ const StocksDashboard = () => {
       {/* HEADER SECTION */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '0.5rem' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white', fontFamily: 'Outfit, sans-serif' }}>
-          Monitor de Renta Variable
+          {title}
         </h2>
         <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginTop: '-1rem' }}>
-          Cotizaciones en vivo del Panel Líder y General (BYMA).
+          {subtitle}
         </p>
       </div>
 

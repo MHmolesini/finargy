@@ -170,6 +170,52 @@ app.get('/api/stocks', async (req: Request, res: Response) => {
     }
 });
 
+app.get('/api/cedears', async (req: Request, res: Response) => {
+    try {
+      const cedearsMetadataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'cedears_metadata.json'), 'utf8'));
+      const cedearsMetadata = cedearsMetadataRaw as Record<string, { sector: string, industria: string }>;
+
+      const response = await axios.get('https://data912.com/live/arg_cedears');
+      const rawData = response.data;
+
+      const enrichedCedears = rawData.map((cedear: any) => {
+        let baseSymbol = cedear.symbol;
+        let moneda = 'ARS';
+
+        // Detectar si cotiza en dólares MEP (D) o CCL (C)
+        if (baseSymbol.endsWith('D') || baseSymbol.endsWith('C')) {
+            const potentialParent = baseSymbol.slice(0, -1);
+            if (cedearsMetadata[potentialParent]) {
+                baseSymbol = potentialParent;
+                moneda = 'USD';
+            }
+        }
+        
+        // Excepciones raras (A veces aparecen como DR, o algo extraño en BYMA)
+        if (baseSymbol.endsWith('DR')) {
+            const drParent = baseSymbol.replace('DR', '').trim();
+            if (cedearsMetadata[drParent]) {
+                baseSymbol = drParent;
+            }
+        }
+
+        const sector = cedearsMetadata[baseSymbol]?.sector || 'General';
+        const industria = cedearsMetadata[baseSymbol]?.industria || 'General';
+
+        return {
+            ...cedear,
+            sector,
+            industria,
+            moneda
+        };
+      });
+
+      res.json(enrichedCedears);
+    } catch (error) {
+      res.status(500).json({ error: 'Error al obtener datos de cedears' });
+    }
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
