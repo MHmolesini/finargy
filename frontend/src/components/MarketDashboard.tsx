@@ -33,16 +33,23 @@ export interface ProcessedNote extends BaseNote {
 }
 
 const MarketDashboard = () => {
-  const [notes, setNotes] = useState<BaseNote[]>([]);
+  const [notesData, setNotesData] = useState<BaseNote[]>([]);
+  const [bondsData, setBondsData] = useState<BaseNote[]>([]);
+  const [activeMarket, setActiveMarket] = useState<'letras' | 'bonos'>('letras');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/notes');
-      if (!response.ok) throw new Error('Error al conectar con el backend');
-      const data = await response.json();
-      setNotes(data);
+      const [notesRes, bondsRes] = await Promise.all([
+        fetch('http://localhost:3001/api/notes'),
+        fetch('http://localhost:3001/api/bonds')
+      ]);
+      if (!notesRes.ok || !bondsRes.ok) throw new Error('Error al conectar con el backend');
+      const notesJson = await notesRes.json();
+      const bondsJson = await bondsRes.json();
+      setNotesData(notesJson);
+      setBondsData(bondsJson);
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -62,7 +69,9 @@ const MarketDashboard = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return notes.map(note => {
+    const activeData = activeMarket === 'letras' ? notesData : bondsData;
+
+    return activeData.map(note => {
       let daysToVto = null;
       if (note.fecha_vencimiento) {
         const vto = new Date(note.fecha_vencimiento);
@@ -90,11 +99,9 @@ const MarketDashboard = () => {
         }
 
         // --- INGENIERÍA INVERSA (T-1) ---
-        // pct_change viene como porcentaje, ej. 0.19 o -0.5
-        // Precio_1 = Precio_0 * (1 + pct_change / 100) -> Precio_0 = Precio_1 / (1 + pct_change / 100)
         let pct = note.pct_change || 0;
         precioAnterior = note.c / (1 + (pct / 100));
-        diasAnterior = daysToVto + 1; // Un día más al vencimiento que hoy
+        diasAnterior = daysToVto + 1; 
 
         const factorAyer = note.precio_final_estimado / precioAnterior;
         if (factorAyer > 0) {
@@ -117,18 +124,70 @@ const MarketDashboard = () => {
         teaAnterior
       };
     });
-  }, [notes]);
+  }, [notesData, bondsData, activeMarket]);
 
   if (loading) return <div style={{ padding: '2rem', color: 'var(--text-dim)', textAlign: 'center' }}>Cargando cotizaciones...</div>;
   if (error) return <div style={{ padding: '2rem', color: 'var(--danger)', textAlign: 'center' }}>{error}</div>;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Gráfico avanzado renderizado primero */}
-      <YieldCurveChart notes={processedNotes} />
-      
-      {/* Tabla conservando el scroll interno */}
-      <NotesTable notes={processedNotes} />
+    <div className="flex flex-col gap-6">
+      {/* HEADER AND TABS */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '1rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white', fontFamily: 'Outfit, sans-serif' }}>
+          Monitor de {activeMarket === 'letras' ? 'Letras (TEM)' : 'Bonos Soberanos'}
+        </h2>
+        
+        {/* MARKET FILTER TOGGLE */}
+        <div className="glass" style={{ display: 'inline-flex', width: 'fit-content', padding: '0.35rem', borderRadius: '0.75rem', gap: '0.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <button
+            onClick={() => setActiveMarket('letras')}
+            style={{
+              padding: '0.5rem 1.5rem',
+              borderRadius: '0.5rem',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              transition: 'all 0.2s',
+              cursor: 'pointer',
+              border: 'none',
+              backgroundColor: activeMarket === 'letras' ? '#10B981' : 'transparent',
+              color: activeMarket === 'letras' ? '#fff' : 'var(--text-dim)',
+              boxShadow: activeMarket === 'letras' ? '0 0 15px rgba(16, 185, 129, 0.4)' : 'none'
+            }}
+            onMouseOver={(e) => { if(activeMarket !== 'letras') e.currentTarget.style.color = '#fff' }}
+            onMouseOut={(e) => { if(activeMarket !== 'letras') e.currentTarget.style.color = 'var(--text-dim)' }}
+          >
+            Letras
+          </button>
+          <button
+            onClick={() => setActiveMarket('bonos')}
+            style={{
+              padding: '0.5rem 1.5rem',
+              borderRadius: '0.5rem',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              transition: 'all 0.2s',
+              cursor: 'pointer',
+              border: 'none',
+              backgroundColor: activeMarket === 'bonos' ? '#3B82F6' : 'transparent',
+              color: activeMarket === 'bonos' ? '#fff' : 'var(--text-dim)',
+              boxShadow: activeMarket === 'bonos' ? '0 0 15px rgba(59, 130, 246, 0.4)' : 'none'
+            }}
+            onMouseOver={(e) => { if(activeMarket !== 'bonos') e.currentTarget.style.color = '#fff' }}
+            onMouseOut={(e) => { if(activeMarket !== 'bonos') e.currentTarget.style.color = 'var(--text-dim)' }}
+          >
+            Bonos
+          </button>
+        </div>
+      </div>
+
+      {/* RE-ESTRUCTURANDO EL DATA BINDING AUTOMÁTICO */}
+      <div className="w-full bg-[#111]/50 backdrop-blur-md rounded-xl border border-[#222] p-4 shadow-xl">
+        <YieldCurveChart notes={processedNotes} activeMarket={activeMarket} />
+      </div>
+
+      <div className="flex-grow min-w-0">
+        <NotesTable notes={processedNotes} />
+      </div>
     </div>
   );
 };

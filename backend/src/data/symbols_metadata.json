@@ -86,5 +86,35 @@
   "D30S6": {
     "tipo_activo": "lelink",
     "fecha_vencimiento": "2026-09-30"
+  },
+  "T30J6": {
+    "tipo_activo": "boncap",
+    "fecha_vencimiento": "2026-06-30",
+    "fecha_emision": "2025-01-17",
+    "tasa_licitacion": 0.0215
+  },
+  "T15E7": {
+    "tipo_activo": "boncap",
+    "fecha_vencimiento": "2027-01-15",
+    "fecha_emision": "2025-01-31",
+    "tasa_licitacion": 0.0205
+  },
+  "T30A7": {
+    "tipo_activo": "boncap",
+    "fecha_vencimiento": "2027-04-30",
+    "fecha_emision": "2025-10-31",
+    "tasa_licitacion": 0.0255
+  },
+  "T31Y7": {
+    "tipo_activo": "boncap",
+    "fecha_vencimiento": "2027-05-31",
+    "fecha_emision": "2025-12-15",
+    "tasa_licitacion": 0.0240
+  },
+  "T30J7": {
+    "tipo_activo": "boncap",
+    "fecha_vencimiento": "2027-06-30",
+    "fecha_emision": "2026-01-16",
+    "tasa_licitacion": 0.0258
   }
 }

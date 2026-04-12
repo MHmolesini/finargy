@@ -6,28 +6,73 @@ import { ProcessedNote } from './MarketDashboard';
 
 interface YieldCurveChartProps {
   notes: ProcessedNote[];
+  activeMarket?: 'letras' | 'bonos';
 }
 
-const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes }) => {
+const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes, activeMarket }) => {
   const chartOptions = useMemo(() => {
     // Filtrar solo las notas con días y TEM válidos
     const validNotes = notes.filter(n => n.daysToVto !== null && n.daysToVto > 0 && n.tem !== null);
 
-    // Mapear los datos para ECharts (Hoy)
-    const seriesData = validNotes.map(n => {
+    // Determinar los colores de cada Categoría (Tipo de Activo)
+    const baseColors: Record<string, string> = {
+      'LECAP': '#10b981', // Verde
+      'LECER': '#3b82f6', // Azul
+      'LELINK': '#f59e0b', // Ambar
+      'BONCAP': '#06b6d4', // Cyan brillante
+      'BONO': '#a855f7', // Purpura
+      'OTROS': '#a855f7'
+    };
+
+    const tipos = Array.from(new Set(validNotes.map(n => (n.tipo_activo || 'OTROS').toUpperCase())));
+
+    // Mapear los datos agrupados por tipo (Hoy)
+    const activeScatterSeries = tipos.map(tipo => {
+      const tipoNotes = validNotes.filter(n => (n.tipo_activo || 'OTROS').toUpperCase() === tipo);
+      const mainColor = baseColors[tipo] || baseColors['OTROS'];
+      
       return {
-        name: n.symbol,
-        value: [n.daysToVto, n.tem],
-        itemStyle: {
-          color: (n.tem as number) > 0 ? '#10b981' : '#ef4444',
-          shadowBlur: 10,
-          shadowColor: (n.tem as number) > 0 ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)'
+        name: tipo,
+        type: 'scatter',
+        symbolSize: 12,
+        data: tipoNotes.map(n => {
+          // Si el tem es negativo, el color individual lo pintamos rojo de alerta, sino el color principal
+          const c = (n.tem as number) < 0 ? '#ef4444' : mainColor;
+          return {
+            name: n.symbol,
+            value: [n.daysToVto, n.tem],
+            itemStyle: {
+              color: c,
+              shadowBlur: 10,
+              shadowColor: (n.tem as number) < 0 ? 'rgba(239, 68, 68, 0.5)' : c
+            },
+            details: {
+              tea: n.tea,
+              tasaDirecta: n.tasaDirecta,
+              temAnterior: n.temAnterior,
+              variacionTEM: (n.tem as number) - (n.temAnterior as number)
+            }
+          };
+        }),
+        zlevel: 2,
+        label: {
+          show: false,
+          formatter: '{b}',
+          position: 'right',
+          color: 'rgba(255, 255, 255, 0.7)',
+          fontSize: 11,
+          distance: 8
         },
-        details: {
-          tea: n.tea,
-          tasaDirecta: n.tasaDirecta,
-          temAnterior: n.temAnterior,
-          variacionTEM: (n.tem as number) - (n.temAnterior as number)
+        emphasis: {
+          focus: 'series',
+          scale: true,
+          itemStyle: { shadowBlur: 20 },
+          label: {
+            show: true,
+            color: '#ffffff',
+            fontSize: 13,
+            fontWeight: 'bold'
+          }
         }
       };
     });
@@ -114,6 +159,13 @@ const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes }) => {
           fontWeight: 600,
           fontFamily: 'Outfit, sans-serif'
         }
+      },
+      legend: {
+        type: 'scroll',
+        top: '20px',
+        right: '20px',
+        textStyle: { color: '#f0f0f0' },
+        icon: 'circle'
       },
       tooltip: {
         trigger: 'item',
@@ -210,34 +262,7 @@ const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes }) => {
         }
       },
       series: [
-        {
-          name: 'Instrumentos',
-          type: 'scatter',
-          symbolSize: 12,
-          data: seriesData,
-          zlevel: 2,
-          label: {
-            show: false,
-            formatter: '{b}',
-            position: 'right',
-            color: 'rgba(255, 255, 255, 0.7)',
-            fontSize: 11,
-            distance: 8
-          },
-          emphasis: {
-            focus: 'series',
-            scale: true,
-            itemStyle: {
-              shadowBlur: 20
-            },
-            label: {
-              show: true,
-              color: '#ffffff',
-              fontSize: 13,
-              fontWeight: 'bold'
-            }
-          }
-        },
+        ...activeScatterSeries,
         {
           name: 'Regresión Logarítmica',
           type: 'line',
@@ -297,6 +322,20 @@ const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes }) => {
   }, [notes]);
 
   if (!notes || notes.length === 0) return null;
+
+  const validCount = notes.filter(n => n.daysToVto !== null && n.daysToVto > 0 && n.tem !== null).length;
+  
+  if (validCount === 0) {
+    return (
+      <div className="premium-table-container glass animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', height: '400px', width: '100%', marginBottom: '1rem' }}>
+        <svg fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: '64px', height: '64px', color: '#444' }} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"></path>
+        </svg>
+        <p style={{ color: '#9ca3af', fontSize: '1.25rem', fontWeight: 500, margin: 0 }}>Curva de Rendimiento no computable para {activeMarket === 'bonos' ? 'Bonos' : 'este Activo'}.</p>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: 0 }}>Los instrumentos actuales no poseen TEM lineal para dibujar la curva.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="premium-table-container glass animate-fade-in" style={{ height: '400px', width: '100%', marginBottom: '1rem', position: 'relative' }}>

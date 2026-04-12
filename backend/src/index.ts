@@ -70,8 +70,49 @@ app.get('/api/notes', async (req: Request, res: Response) => {
 
     res.json(enrichedData);
   } catch (error) {
-    console.error('Error fetching data from data912:', error);
+    console.error('Error fetching data from data912 (notes):', error);
     res.status(500).json({ error: 'Error al obtener datos de la API externa' });
+  }
+});
+
+// Endpoint de proxy para arg_bonds enriquecido
+app.get('/api/bonds', async (req: Request, res: Response) => {
+  try {
+    const response = await axios.get('https://data912.com/live/arg_bonds');
+    const liveData = response.data;
+    const metadata = getMetadata();
+
+    // Enriquecer datos usando la misma lógica robusta
+    const enrichedData = liveData.map((bond: any) => {
+      const meta = metadata[bond.symbol];
+      let precio_final_estimado = null;
+
+      if (meta?.fecha_emision && meta?.fecha_vencimiento && meta?.tasa_licitacion) {
+        const emision = new Date(meta.fecha_emision);
+        const vencimiento = new Date(meta.fecha_vencimiento);
+        emision.setHours(0,0,0,0);
+        vencimiento.setHours(0,0,0,0);
+        
+        const diffTime = vencimiento.getTime() - emision.getTime();
+        const diasReales = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        
+        // T+1: Calculamos al día previo al vencimiento real
+        const diasCalc = Math.max(0, diasReales - 1);
+        precio_final_estimado = 100 * Math.pow((1 + meta.tasa_licitacion), diasCalc / 30.0);
+      }
+
+      return {
+        ...bond,
+        tipo_activo: meta?.tipo_activo || 'bono', // Default a bono si no está en metadata
+        fecha_vencimiento: meta?.fecha_vencimiento || null,
+        precio_final_estimado: precio_final_estimado
+      };
+    });
+
+    res.json(enrichedData);
+  } catch (error) {
+    console.error('Error fetching data from data912 (bonds):', error);
+    res.status(500).json({ error: 'Error al obtener datos de la API externa de bonos' });
   }
 });
 

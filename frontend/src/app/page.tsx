@@ -13,15 +13,6 @@ export default function Home() {
       </header>
       
       <section>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h3 className="font-outfit" style={{ fontSize: '1.25rem', fontWeight: 500 }}>
-            Bonos Soberanos / Letras
-          </h3>
-          <div className="glass" style={{ padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-            Filtros: Todos los activos
-          </div>
-        </div>
-        
         <MarketDashboard />
       </section>
 
