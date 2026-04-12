@@ -49,9 +49,10 @@ const getSectorHexColor = (sector: string) => {
 interface StocksSunburstProps {
   stocks: Stock[];
   volumeMode?: 'nominal' | 'monto';
+  onSelectSymbol?: (symbol: string) => void;
 }
 
-const StocksSunburst: React.FC<StocksSunburstProps> = ({ stocks, volumeMode = 'nominal' }) => {
+const StocksSunburst: React.FC<StocksSunburstProps> = ({ stocks, volumeMode = 'nominal', onSelectSymbol }) => {
   const chartOptions = useMemo(() => {
     // 1. Agrupamiento Jerárquico
     const sectorMap: Record<string, any> = {};
@@ -169,6 +170,13 @@ const StocksSunburst: React.FC<StocksSunburstProps> = ({ stocks, volumeMode = 'n
           option={chartOptions}
           style={{ height: '100%', width: '100%' }}
           opts={{ renderer: 'canvas' }}
+          onEvents={{
+            'click': (params: any) => {
+              if (params.data && !params.data.children) {
+                onSelectSymbol?.(params.data.name);
+              }
+            }
+          }}
         />
       </div>
     </div>

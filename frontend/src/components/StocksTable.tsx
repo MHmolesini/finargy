@@ -31,9 +31,11 @@ type SortConfig = {
 
 interface StocksTableProps {
   stocks: Stock[];
+  selectedSymbol?: string | null;
+  onSelectSymbol?: (symbol: string) => void;
 }
 
-const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
+const StocksTable: React.FC<StocksTableProps> = ({ stocks, selectedSymbol, onSelectSymbol }) => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'v', direction: 'desc' });
 
   // 1. Data Enrichment (Calculamos Spread y Ticket)
@@ -210,7 +212,15 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
                   const sectorColors = getSectorColor(stock.sector);
 
                   return (
-                    <tr key={stock.symbol}>
+                    <tr 
+                      key={stock.symbol}
+                      onClick={() => onSelectSymbol?.(stock.symbol)}
+                      style={{
+                        cursor: 'pointer',
+                        backgroundColor: selectedSymbol === stock.symbol ? 'rgba(59, 130, 246, 0.12)' : 'transparent',
+                        transition: 'background-color 0.2s',
+                      }}
+                    >
                       {/* Sector Badge */}
                       <td style={{ paddingLeft: '1.5rem' }}>
                         <div style={{

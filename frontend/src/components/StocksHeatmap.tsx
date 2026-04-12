@@ -5,9 +5,10 @@ import { Stock } from './StocksTable';
 interface HeatmapProps {
   stocks: Stock[];
   volumeMode?: 'nominal' | 'monto';
+  onSelectSymbol?: (symbol: string) => void;
 }
 
-const StocksHeatmap: React.FC<HeatmapProps> = ({ stocks, volumeMode = 'nominal' }) => {
+const StocksHeatmap: React.FC<HeatmapProps> = ({ stocks, volumeMode = 'nominal', onSelectSymbol }) => {
   const chartOptions = useMemo(() => {
     
     // Interpolación básica de rojos y verdes térmicos tipo TradingView
@@ -177,6 +178,13 @@ const StocksHeatmap: React.FC<HeatmapProps> = ({ stocks, volumeMode = 'nominal' 
           option={chartOptions}
           style={{ height: '100%', width: '100%' }}
           opts={{ renderer: 'canvas' }}
+          onEvents={{
+            'click': (params: any) => {
+              if (params.data && !params.data.children) {
+                onSelectSymbol?.(params.data.name);
+              }
+            }
+          }}
         />
       </div>
     </div>

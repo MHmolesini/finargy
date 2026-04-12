@@ -5,6 +5,7 @@ import StocksTable, { Stock } from './StocksTable';
 import StocksSunburst from './StocksSunburst';
 import StocksHeatmap from './StocksHeatmap';
 import StocksScatter from './StocksScatter';
+import StocksHistoricalChart from './StocksHistoricalChart';
 import { RefreshCw, Filter, ChevronDown, Check, Search, X } from 'lucide-react';
 
 interface StocksDashboardProps {
@@ -24,6 +25,11 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [volumeMode, setVolumeMode] = useState<'nominal' | 'monto'>('monto');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+
+  const handleSelectSymbol = (symbol: string) => {
+    setSelectedSymbol(prev => prev === symbol ? null : symbol);
+  };
 
   // Estados del Menú Sticky Multiselect
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
@@ -482,21 +488,46 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
       {/* RENTA VARIABLE VISUALIZATIONS */}
       <div className="dashboard-content grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Gráfico Sunburst Analítico de Ecosistemas */}
-        <StocksSunburst stocks={filteredData} volumeMode={volumeMode} />
+        <StocksSunburst 
+          stocks={filteredData} 
+          volumeMode={volumeMode} 
+          onSelectSymbol={handleSelectSymbol}
+        />
 
         {/* Gráfico Treemap Térmico */}
-        <StocksHeatmap stocks={filteredData} volumeMode={volumeMode} />
+        <StocksHeatmap 
+          stocks={filteredData} 
+          volumeMode={volumeMode} 
+          onSelectSymbol={handleSelectSymbol}
+        />
       </div>
 
       <div className="dashboard-content w-full">
         {/* Gráfico Dispersión */}
-        <StocksScatter stocks={filteredData} volumeMode={volumeMode} />
+        <StocksScatter 
+          stocks={filteredData} 
+          volumeMode={volumeMode} 
+          onSelectSymbol={handleSelectSymbol}
+        />
       </div>
 
       <div className="dashboard-content">
         {/* Tabla de Instrumentos Base */}
-        <StocksTable stocks={filteredData} />
+        <StocksTable 
+          stocks={filteredData} 
+          selectedSymbol={selectedSymbol}
+          onSelectSymbol={handleSelectSymbol}
+        />
       </div>
+
+      {selectedSymbol && (
+        <div className="dashboard-content w-full animate-fade-in">
+          <StocksHistoricalChart 
+            symbol={selectedSymbol} 
+            onClose={() => setSelectedSymbol(null)} 
+          />
+        </div>
+      )}
     </div>
   );
 };

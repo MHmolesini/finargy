@@ -39,9 +39,10 @@ const getSectorHexColor = (sector: string) => {
 interface ScatterProps {
   stocks: Stock[];
   volumeMode?: 'nominal' | 'monto';
+  onSelectSymbol?: (symbol: string) => void;
 }
 
-const StocksScatter: React.FC<ScatterProps> = ({ stocks, volumeMode = 'nominal' }) => {
+const StocksScatter: React.FC<ScatterProps> = ({ stocks, volumeMode = 'nominal', onSelectSymbol }) => {
   const chartOptions = useMemo(() => {
 
     // Solo operamos con ARS y evitamos outliers nulos
@@ -234,6 +235,13 @@ const StocksScatter: React.FC<ScatterProps> = ({ stocks, volumeMode = 'nominal' 
             option={chartOptions}
             style={{ height: '100%', width: '100%' }}
             opts={{ renderer: 'canvas' }}
+            onEvents={{
+              'click': (params: any) => {
+                if (params.data && params.data[3]) {
+                  onSelectSymbol?.(params.data[3]);
+                }
+              }
+            }}
           />
         </div>
       </div>
