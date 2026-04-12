@@ -5,7 +5,7 @@ import StocksTable, { Stock } from './StocksTable';
 import StocksSunburst from './StocksSunburst';
 import StocksHeatmap from './StocksHeatmap';
 import StocksScatter from './StocksScatter';
-import { RefreshCw, Filter, ChevronDown, Check } from 'lucide-react';
+import { RefreshCw, Filter, ChevronDown, Check, Search, X } from 'lucide-react';
 
 interface StocksDashboardProps {
   apiEndpoint?: string;
@@ -23,6 +23,7 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [volumeMode, setVolumeMode] = useState<'nominal' | 'monto'>('monto');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Estados del Menú Sticky Multiselect
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
@@ -152,8 +153,14 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
         return false;
       });
     }
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      result = result.filter(stock => 
+        stock.symbol.toLowerCase().includes(lowerSearch)
+      );
+    }
     return result;
-  }, [data, selectedSectors, selectedIndustries, selectedTrends]);
+  }, [data, selectedSectors, selectedIndustries, selectedTrends, searchTerm]);
 
   const toggleSector = (sector: string) => {
     setSelectedSectors(prev => 
@@ -385,6 +392,47 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#ef4444', boxShadow: selectedTrends.includes('negative') ? '0 0 8px #ef4444' : 'none' }}></div>
                Bajas <span style={{ opacity: 0.6 }}>{trendCounts.negative}</span>
              </button>
+           </div>
+           
+           {/* BARRA DE BÚSQUEDA CENTRAL */}
+           <div style={{ 
+             display: 'flex', 
+             alignItems: 'center', 
+             gap: '10px', 
+             backgroundColor: 'rgba(255,255,255,0.05)', 
+             borderRadius: '20px', 
+             padding: '6px 14px',
+             border: '1px solid rgba(255,255,255,0.1)',
+             minWidth: '220px',
+             flex: '0 1 300px',
+             marginLeft: '16px',
+             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+             boxShadow: searchTerm ? '0 0 15px rgba(59,130,246,0.15)' : 'none'
+           }}>
+             <Search size={16} color={searchTerm ? '#3b82f6' : '#64748b'} />
+             <input 
+               type="text"
+               placeholder="Buscar símbolo (ej: AAPL, GGAL)..."
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
+               style={{
+                 background: 'transparent',
+                 border: 'none',
+                 color: 'white',
+                 fontSize: '0.85rem',
+                 outline: 'none',
+                 width: '100%',
+                 fontFamily: 'Inter, sans-serif'
+               }}
+             />
+             {searchTerm && (
+               <button 
+                 onClick={() => setSearchTerm('')}
+                 style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex' }}
+               >
+                 <X size={14} color="#94a3b8" />
+               </button>
+             )}
            </div>
          </div>
          
