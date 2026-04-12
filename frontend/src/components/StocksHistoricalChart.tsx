@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import StocksTechnicalSummary from './StocksTechnicalSummary';
+import StocksReturnsHeatmap from './StocksReturnsHeatmap';
 import { X, Calendar, TrendingUp, TrendingDown, Maximize2, BarChart3 } from 'lucide-react';
 
 interface HistoricalData {
@@ -46,7 +47,7 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
   }, [symbol]);
 
   const chartOptions = useMemo(() => {
-    if (data.length === 0) return {};
+    if (!Array.isArray(data) || data.length === 0) return {};
 
     const dates = data.map(item => item.date);
     const values = data.map(item => [item.o, item.c, item.l, item.h]);
@@ -270,6 +271,9 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
           opts={{ renderer: 'canvas' }}
         />
       </div>
+
+      {/* Heatmap de Rendimientos Mensuales */}
+      <StocksReturnsHeatmap historicalData={data} />
 
       {/* Resumen Técnico e Indicadores */}
       <StocksTechnicalSummary symbol={symbol} historicalData={data} />

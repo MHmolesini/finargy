@@ -172,7 +172,7 @@ const TechnicalGauge = ({ value, label, counts, title, size = '320px', fontSize 
 
 const StocksTechnicalSummary = ({ historicalData }: StocksTechnicalSummaryProps) => {
   const technicalData = useMemo(() => {
-    if (historicalData.length < 52) return null;
+    if (!Array.isArray(historicalData) || historicalData.length < 52) return null;
 
     const highs = historicalData.map(d => d.h);
     const lows = historicalData.map(d => d.l);
@@ -347,9 +347,9 @@ const StocksTechnicalSummary = ({ historicalData }: StocksTechnicalSummaryProps)
                 <tr key={key} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                   <td style={{ padding: '12px 0' }}>
                     <div style={{ color: '#e2e8f0', marginBottom: '4px' }}>{key.toUpperCase()}</div>
-                    <LevelBar value={d.v} type={key as any} isUp={d.up} />
+                    <LevelBar value={d.v || 0} type={key as any} isUp={d.up} />
                   </td>
-                  <td style={{ color: '#fff', fontWeight: 500 }}>{d.v.toFixed(2)}</td>
+                  <td style={{ color: '#fff', fontWeight: 500 }}>{d.v !== null && d.v !== undefined ? d.v.toFixed(2) : '-'}</td>
                   <td style={{ textAlign: 'right', fontWeight: 600, color: d.i.color }}>{d.i.action}</td>
                 </tr>
               ))}
@@ -377,29 +377,29 @@ const StocksTechnicalSummary = ({ historicalData }: StocksTechnicalSummaryProps)
                 <React.Fragment key={idx}>
                   <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                     <td style={{ padding: '12px 0', color: '#e2e8f0' }}>EMA ({r.p})</td>
-                    <td style={{ color: '#fff', fontWeight: 500 }}>{r.eVal.toLocaleString()}</td>
+                    <td style={{ color: '#fff', fontWeight: 500 }}>{r.eVal !== null && r.eVal !== undefined ? r.eVal.toLocaleString() : '-'}</td>
                     <td style={{ textAlign: 'right', fontWeight: 600, color: r.eInfo.color }}>{r.eInfo.action}</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                     <td style={{ padding: '12px 0', color: '#e2e8f0' }}>SMA ({r.p})</td>
-                    <td style={{ color: '#fff', fontWeight: 500 }}>{r.sVal.toLocaleString()}</td>
+                    <td style={{ color: '#fff', fontWeight: 500 }}>{r.sVal !== null && r.sVal !== undefined ? r.sVal.toLocaleString() : '-'}</td>
                     <td style={{ textAlign: 'right', fontWeight: 600, color: r.sInfo.color }}>{r.sInfo.action}</td>
                   </tr>
                 </React.Fragment>
               ))}
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                 <td style={{ padding: '12px 0', color: '#e2e8f0' }}>Línea Ichimoku Base (26)</td>
-                <td style={{ color: '#fff', fontWeight: 500 }}>{technicalData.ma.details.ichi.v.toLocaleString()}</td>
+                <td style={{ color: '#fff', fontWeight: 500 }}>{technicalData.ma.details.ichi.v !== null && technicalData.ma.details.ichi.v !== undefined ? technicalData.ma.details.ichi.v.toLocaleString() : '-'}</td>
                 <td style={{ textAlign: 'right', fontWeight: 600, color: technicalData.ma.details.ichi.i.color }}>{technicalData.ma.details.ichi.i.action}</td>
               </tr>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                 <td style={{ padding: '12px 0', color: '#e2e8f0' }}>Media Móvil VWMA (20)</td>
-                <td style={{ color: '#fff', fontWeight: 500 }}>{technicalData.ma.details.vwma.v.toLocaleString()}</td>
+                <td style={{ color: '#fff', fontWeight: 500 }}>{technicalData.ma.details.vwma.v !== null && technicalData.ma.details.vwma.v !== undefined ? technicalData.ma.details.vwma.v.toLocaleString() : '-'}</td>
                 <td style={{ textAlign: 'right', fontWeight: 600, color: technicalData.ma.details.vwma.i.color }}>{technicalData.ma.details.vwma.i.action}</td>
               </tr>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                 <td style={{ padding: '12px 0', color: '#e2e8f0' }}>Media Móvil Hull (9)</td>
-                <td style={{ color: '#fff', fontWeight: 500 }}>{technicalData.ma.details.hma.v.toLocaleString()}</td>
+                <td style={{ color: '#fff', fontWeight: 500 }}>{technicalData.ma.details.hma.v !== null && technicalData.ma.details.hma.v !== undefined ? technicalData.ma.details.hma.v.toLocaleString() : '-'}</td>
                 <td style={{ textAlign: 'right', fontWeight: 600, color: technicalData.ma.details.hma.i.color }}>{technicalData.ma.details.hma.i.action}</td>
               </tr>
             </tbody>
