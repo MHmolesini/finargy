@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
 }
 
 serve(async (req) => {
@@ -16,11 +17,11 @@ serve(async (req) => {
     const url = new URL(req.url)
     const type = url.searchParams.get('type') || 'stocks'
 
-    // Configuración de Supabase (Variables internas del Edge Function)
+    // Configuración de Supabase
+    // Usamos el cliente sin pasar el header de autorizacion si no viene, para evitar errores
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
     let apiUrl = ''
