@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import StocksTable, { Stock } from './StocksTable';
 import StocksSunburst from './StocksSunburst';
 import StocksHeatmap from './StocksHeatmap';
+import StocksScatter from './StocksScatter';
 
 const StocksDashboard = () => {
   const [data, setData] = useState<Stock[]>([]);
@@ -80,6 +81,11 @@ const StocksDashboard = () => {
 
         {/* Gráfico Treemap Térmico */}
         <StocksHeatmap stocks={data} />
+      </div>
+
+      <div className="dashboard-content w-full">
+        {/* Gráfico Dispersión */}
+        <StocksScatter stocks={data} />
       </div>
 
       <div className="dashboard-content">
