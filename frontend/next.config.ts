@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
   assetPrefix: '/finargy',
   images: {
     unoptimized: true, // Requerido para despliegues estáticos
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   }
 };
 

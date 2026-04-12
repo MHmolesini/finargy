@@ -23,6 +23,7 @@ interface HistoricalData {
 
 interface StocksTechnicalSummaryProps {
   historicalData: HistoricalData[];
+  symbol?: string;
 }
 
 const LevelBar = ({ value, type, isUp }: { value: number, type: 'rsi' | 'stoch' | 'cci' | 'adx' | 'ao' | 'mom' | 'macd' | 'stochRsi' | 'williamsR' | 'bullBear' | 'uo', isUp?: boolean }) => {
