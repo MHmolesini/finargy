@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import StocksTable, { Stock } from './StocksTable';
+import StocksSunburst from './StocksSunburst';
 
 const StocksDashboard = () => {
   const [data, setData] = useState<Stock[]>([]);
@@ -71,8 +72,12 @@ const StocksDashboard = () => {
         </p>
       </div>
 
-      {/* RENTA VARIABLE TABLE */}
-      <div className="flex-grow min-w-0">
+      {/* RENTA VARIABLE VISUALIZATIONS */}
+      <div className="dashboard-content flex flex-col gap-6">
+        {/* Gráfico Sunburst Analítico de Ecosistemas */}
+        <StocksSunburst stocks={data} />
+
+        {/* Tabla de Instrumentos Base */}
         <StocksTable stocks={data} />
       </div>
     </div>
