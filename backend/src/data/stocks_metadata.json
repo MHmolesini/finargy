@@ -1,78 +1,382 @@
 {
-  "YPFD": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  "GGAL": { "sector": "Finanzas", "industria": "Bancos regionales" },
-  "BMA": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "TECO2": { "sector": "Comunicaciones", "industria": "Principales empresas de telecomunicaciones" },
-  "TGSU2": { "sector": "Servicios públicos", "industria": "Distribuidores de gas" },
-  "PAMP": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "BBAR": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "CEPU": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "TXAR": { "sector": "Minerales no energéticos", "industria": "Acero" },
-  "BYMA": { "sector": "Finanzas", "industria": "Brokers y bancos de inversión" },
-  "LOMA": { "sector": "Minerales no energéticos", "industria": "Materiales de construcción" },
-  "EDN": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "TRAN": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "BPAT": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "CVH": { "sector": "Comunicaciones", "industria": "Telecomunicaciones especializadas" },
-  "SUPV": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "MOLA": { "sector": "Industrias de proceso", "industria": "Productos agrícolas y de molienda" },
-  "METR": { "sector": "Servicios públicos", "industria": "Distribuidores de gas" },
-  "CRES": { "sector": "Industrias de proceso", "industria": "Productos agrícolas y de molienda" },
-  "CAPX": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "CTIO": { "sector": "Finanzas", "industria": "Desarrollo inmobiliario" },
-  "ALUA": { "sector": "Minerales no energéticos", "industria": "Aluminio" },
-  "COME": { "sector": "Servicios industriales", "industria": "Contrato de perforación" },
-  "ECOG": { "sector": "Servicios públicos", "industria": "Distribuidores de gas" },
-  "TGNO4": { "sector": "Servicios industriales", "industria": "Oleoductos y gasoductos" },
-  "VALO": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "AGRO": { "sector": "Fabricación de productos", "industria": "Maquinaria agrícola, de construcción y camiones" },
-  "AUSO": { "sector": "Transporte", "industria": "Otros medios de transporte" },
-  "BHIP": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "BOLT": { "sector": "Comunicaciones", "industria": "Telecomunicaciones especializadas" },
-  "CADO": { "sector": "Industrias de proceso", "industria": "Productos agrícolas" },
-  "CARC": { "sector": "Transporte", "industria": "Otros medios de transporte" },
-  "CECO2": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "CELU": { "sector": "Industrias de proceso", "industria": "Pasta y papel" },
-  "CGPA2": { "sector": "Servicios públicos", "industria": "Distribuidores de gas" },
-  "DOME": { "sector": "Bienes de consumo duraderos", "industria": "Electrónica y electrodomésticos" },
-  "FERR": { "sector": "Fabricación de productos", "industria": "Productos de la construcción" },
-  "FIPL": { "sector": "Industrias de proceso", "industria": "Madera y derivados" },
-  "GAMI": { "sector": "Servicios tecnológicos", "industria": "Servicios de tecnología de la información" },
-  "GARO": { "sector": "Fabricación de productos", "industria": "Productos de la construcción" },
-  "GBAN": { "sector": "Servicios industriales", "industria": "Oleoductos y gasoductos" },
-  "GCDI": { "sector": "Finanzas", "industria": "Desarrollo inmobiliario" },
-  "GCLA": { "sector": "Servicios al consumidor", "industria": "Radiodifusión" },
-  "GRIM": { "sector": "Consumibles perecederos", "industria": "Ropa y calzado" },
-  "HARG": { "sector": "Minerales no energéticos", "industria": "Materiales de construcción" },
-  "HAVA": { "sector": "Consumo no cíclico", "industria": "Alimentos procesados" },
-  "HSAT": { "sector": "Comunicaciones", "industria": "Telecomunicaciones especializadas" },
-  "IEB": { "sector": "Servicios industriales", "industria": "Ingeniería y construcción" },
-  "INTR": { "sector": "Industrias de proceso", "industria": "Químicos: Agricultura" },
-  "IRSA": { "sector": "Finanzas", "industria": "Desarrollo inmobiliario" },
-  "LEDE": { "sector": "Industrias de proceso", "industria": "Productos agrícolas y de molienda" },
-  "LONG": { "sector": "Bienes de consumo duraderos", "industria": "Electrónica y electrodomésticos" },
-  "MIRG": { "sector": "Fabricación de productos", "industria": "Maquinaria industrial" },
-  "MOLI": { "sector": "Consumibles perecederos", "industria": "Alimentación: principales diversificados" },
-  "MORI": { "sector": "Industrias de proceso", "industria": "Productos agrícolas y de molienda" },
-  "OEST": { "sector": "Servicios industriales", "industria": "Ingeniería y construcción" },
-  "PATA": { "sector": "Consumo no cíclico", "industria": "Comercio minorista" },
-  "RICH": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "RIGO": { "sector": "Industrias de proceso", "industria": "Especialidades del sector industrial" },
-  "ROSE": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "SAMI": { "sector": "Industrias de proceso", "industria": "Productos agrícolas y de molienda" },
-  "SEMI": { "sector": "Industrias de proceso", "industria": "Productos agrícolas y de molienda" },
-  "A3": { "sector": "Servicios tecnológicos", "industria": "Servicios y software de Internet" },
-  "RAGH": { "sector": "Bienes de consumo duraderos", "industria": "Construcción de viviendas" },
-  "INVJ": { "sector": "Servicios de distribución", "industria": "Distribuidores de alimentos" },
-  "DGCE": { "sector": "Servicios públicos", "industria": "Distribuidores de gas" },
-  "EDSH": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "INAG": { "sector": "Servicios de distribución", "industria": "Distribuidores al por mayor" },
-  "POLL": { "sector": "Servicios industriales", "industria": "Ingeniería y construcción" },
-  "SPY": { "sector": "Miscelánea", "industria": "Fondos de inversión colectiva y sociedades de inversión" },
-  "MOLI5": { "sector": "Consumibles perecederos", "industria": "Alimentación: principales diversificados" },
-  "REGE": { "sector": "Comercio minorista", "industria": "Tiendas especializadas" },
-  "TECOD": { "sector": "Comunicaciones", "industria": "Principales empresas de telecomunicaciones" },
-  "TGN4D": { "sector": "Servicios industriales", "industria": "Oleoductos y gasoductos" },
-  "TGSUD": { "sector": "Servicios públicos", "industria": "Distribuidores de gas" },
-  "DGCU2": { "sector": "Servicios públicos", "industria": "Distribuidores de gas" }
+  "YPFD": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "GGAL": {
+    "sector": "Finanzas",
+    "industria": "Bancos regionales",
+    "tipo_activo": "acciones"
+  },
+  "BMA": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "TECO2": {
+    "sector": "Comunicaciones",
+    "industria": "Principales empresas de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "TGSU2": {
+    "sector": "Servicios públicos",
+    "industria": "Distribuidores de gas",
+    "tipo_activo": "acciones"
+  },
+  "PAMP": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "BBAR": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "CEPU": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "TXAR": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "BYMA": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "LOMA": {
+    "sector": "Minerales no energéticos",
+    "industria": "Materiales de construcción",
+    "tipo_activo": "acciones"
+  },
+  "EDN": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "TRAN": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "BPAT": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "CVH": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones especializadas",
+    "tipo_activo": "acciones"
+  },
+  "SUPV": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "MOLA": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "METR": {
+    "sector": "Servicios públicos",
+    "industria": "Distribuidores de gas",
+    "tipo_activo": "acciones"
+  },
+  "CRES": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "CAPX": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "CTIO": {
+    "sector": "Finanzas",
+    "industria": "Desarrollo inmobiliario",
+    "tipo_activo": "acciones"
+  },
+  "ALUA": {
+    "sector": "Minerales no energéticos",
+    "industria": "Aluminio",
+    "tipo_activo": "acciones"
+  },
+  "COME": {
+    "sector": "Servicios industriales",
+    "industria": "Contrato de perforación",
+    "tipo_activo": "acciones"
+  },
+  "ECOG": {
+    "sector": "Servicios públicos",
+    "industria": "Distribuidores de gas",
+    "tipo_activo": "acciones"
+  },
+  "TGNO4": {
+    "sector": "Servicios industriales",
+    "industria": "Oleoductos y gasoductos",
+    "tipo_activo": "acciones"
+  },
+  "VALO": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "AGRO": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria agrícola, de construcción y camiones",
+    "tipo_activo": "acciones"
+  },
+  "AUSO": {
+    "sector": "Transporte",
+    "industria": "Otros medios de transporte",
+    "tipo_activo": "acciones"
+  },
+  "BHIP": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "BOLT": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones especializadas",
+    "tipo_activo": "acciones"
+  },
+  "CADO": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas",
+    "tipo_activo": "acciones"
+  },
+  "CARC": {
+    "sector": "Transporte",
+    "industria": "Otros medios de transporte",
+    "tipo_activo": "acciones"
+  },
+  "CECO2": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "CELU": {
+    "sector": "Industrias de proceso",
+    "industria": "Pasta y papel",
+    "tipo_activo": "acciones"
+  },
+  "CGPA2": {
+    "sector": "Servicios públicos",
+    "industria": "Distribuidores de gas",
+    "tipo_activo": "acciones"
+  },
+  "DOME": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Electrónica y electrodomésticos",
+    "tipo_activo": "acciones"
+  },
+  "FERR": {
+    "sector": "Fabricación de productos",
+    "industria": "Productos de la construcción",
+    "tipo_activo": "acciones"
+  },
+  "FIPL": {
+    "sector": "Industrias de proceso",
+    "industria": "Madera y derivados",
+    "tipo_activo": "acciones"
+  },
+  "GAMI": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de tecnología de la información",
+    "tipo_activo": "acciones"
+  },
+  "GARO": {
+    "sector": "Fabricación de productos",
+    "industria": "Productos de la construcción",
+    "tipo_activo": "acciones"
+  },
+  "GBAN": {
+    "sector": "Servicios industriales",
+    "industria": "Oleoductos y gasoductos",
+    "tipo_activo": "acciones"
+  },
+  "GCDI": {
+    "sector": "Finanzas",
+    "industria": "Desarrollo inmobiliario",
+    "tipo_activo": "acciones"
+  },
+  "GCLA": {
+    "sector": "Servicios al consumidor",
+    "industria": "Radiodifusión",
+    "tipo_activo": "acciones"
+  },
+  "GRIM": {
+    "sector": "Consumibles perecederos",
+    "industria": "Ropa y calzado",
+    "tipo_activo": "acciones"
+  },
+  "HARG": {
+    "sector": "Minerales no energéticos",
+    "industria": "Materiales de construcción",
+    "tipo_activo": "acciones"
+  },
+  "HAVA": {
+    "sector": "Consumo no cíclico",
+    "industria": "Alimentos procesados",
+    "tipo_activo": "acciones"
+  },
+  "HSAT": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones especializadas",
+    "tipo_activo": "acciones"
+  },
+  "IEB": {
+    "sector": "Servicios industriales",
+    "industria": "Ingeniería y construcción",
+    "tipo_activo": "acciones"
+  },
+  "INTR": {
+    "sector": "Industrias de proceso",
+    "industria": "Químicos: Agricultura",
+    "tipo_activo": "acciones"
+  },
+  "IRSA": {
+    "sector": "Finanzas",
+    "industria": "Desarrollo inmobiliario",
+    "tipo_activo": "acciones"
+  },
+  "LEDE": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "LONG": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Electrónica y electrodomésticos",
+    "tipo_activo": "acciones"
+  },
+  "MIRG": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria industrial",
+    "tipo_activo": "acciones"
+  },
+  "MOLI": {
+    "sector": "Consumibles perecederos",
+    "industria": "Alimentación: principales diversificados",
+    "tipo_activo": "acciones"
+  },
+  "MORI": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "OEST": {
+    "sector": "Servicios industriales",
+    "industria": "Ingeniería y construcción",
+    "tipo_activo": "acciones"
+  },
+  "PATA": {
+    "sector": "Consumo no cíclico",
+    "industria": "Comercio minorista",
+    "tipo_activo": "acciones"
+  },
+  "RICH": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "RIGO": {
+    "sector": "Industrias de proceso",
+    "industria": "Especialidades del sector industrial",
+    "tipo_activo": "acciones"
+  },
+  "ROSE": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "SAMI": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "SEMI": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "A3": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "RAGH": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Construcción de viviendas",
+    "tipo_activo": "acciones"
+  },
+  "INVJ": {
+    "sector": "Servicios de distribución",
+    "industria": "Distribuidores de alimentos",
+    "tipo_activo": "acciones"
+  },
+  "DGCE": {
+    "sector": "Servicios públicos",
+    "industria": "Distribuidores de gas",
+    "tipo_activo": "acciones"
+  },
+  "EDSH": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "INAG": {
+    "sector": "Servicios de distribución",
+    "industria": "Distribuidores al por mayor",
+    "tipo_activo": "acciones"
+  },
+  "POLL": {
+    "sector": "Servicios industriales",
+    "industria": "Ingeniería y construcción",
+    "tipo_activo": "acciones"
+  },
+  "SPY": {
+    "sector": "Miscelánea",
+    "industria": "Fondos de inversión colectiva y sociedades de inversión",
+    "tipo_activo": "etf"
+  },
+  "MOLI5": {
+    "sector": "Consumibles perecederos",
+    "industria": "Alimentación: principales diversificados",
+    "tipo_activo": "acciones"
+  },
+  "REGE": {
+    "sector": "Comercio minorista",
+    "industria": "Tiendas especializadas",
+    "tipo_activo": "acciones"
+  },
+  "TECOD": {
+    "sector": "Comunicaciones",
+    "industria": "Principales empresas de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "TGN4D": {
+    "sector": "Servicios industriales",
+    "industria": "Oleoductos y gasoductos",
+    "tipo_activo": "acciones"
+  },
+  "TGSUD": {
+    "sector": "Servicios públicos",
+    "industria": "Distribuidores de gas",
+    "tipo_activo": "acciones"
+  },
+  "DGCU2": {
+    "sector": "Servicios públicos",
+    "industria": "Distribuidores de gas",
+    "tipo_activo": "acciones"
+  }
 }

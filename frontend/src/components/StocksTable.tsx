@@ -15,6 +15,7 @@ export interface Stock {
   sector: string;
   industria: string;
   moneda: string;
+  tipo_activo: string;
 }
 
 export interface ProcessedStock extends Stock {
@@ -60,6 +61,17 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
     }
     return sortableItems;
   }, [enrichedStocks, sortConfig]);
+
+  // 3. Agrupamiento por Tipo de Activo (Acciones / ETFs)
+  const groupedStocks = useMemo(() => {
+    const groups: Record<string, ProcessedStock[]> = {};
+    sortedStocks.forEach(stock => {
+      const typeLabel = stock.tipo_activo === 'etf' ? 'ETFs' : 'Acciones';
+      if (!groups[typeLabel]) groups[typeLabel] = [];
+      groups[typeLabel].push(stock);
+    });
+    return groups;
+  }, [sortedStocks]);
 
   // Máximos para barras
   const { maxVolume, maxOps, maxVolMonto } = useMemo(() => {
@@ -168,150 +180,146 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
               <th colSpan={5} style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default' }}></th>
             </tr>
           </thead>
-          <tbody>
-            <tr style={{ background: 'rgba(255,255,255,0.03)', cursor: 'default' }}>
-              <td colSpan={14} style={{ 
-                padding: '0.5rem 1.5rem', 
-                fontSize: '0.8rem', 
-                fontWeight: 'bold', 
-                color: 'var(--accent-color)',
-                letterSpacing: '0.1em',
-                borderBottom: '1px solid var(--border-color)'
-              }}>
-                Mercado Local (BYMA)
-              </td>
-            </tr>
-            {sortedStocks.map((stock) => {
-              const volPercentage = ((stock.v || 0) / maxVolume) * 100;
-              const opsPercentage = ((stock.q_op || 0) / maxOps) * 100;
-              const sectorColors = getSectorColor(stock.sector);
-
-              return (
-                <tr key={stock.symbol}>
-                  {/* Sector Badge */}
-                  <td style={{ paddingLeft: '1.5rem' }}>
-                    <div style={{
-                      display: 'inline-block',
-                      padding: '4px 10px',
-                      borderRadius: '12px',
-                      fontSize: '0.65rem',
-                      fontWeight: 600,
-                      backgroundColor: sectorColors.bg,
-                      color: sectorColors.text,
-                      border: `1px solid ${sectorColors.border}`,
-                      letterSpacing: '0.02em',
-                      whiteSpace: 'nowrap'
-                    }}>
-                      {stock.sector}
-                    </div>
+          {Object.entries(groupedStocks).map(([category, items]) => (
+            <React.Fragment key={category}>
+              <tbody>
+                <tr style={{ background: 'rgba(255,255,255,0.03)', cursor: 'default' }}>
+                  <td colSpan={14} style={{ 
+                    padding: '0.6rem 1.5rem', 
+                    fontSize: '0.8rem', 
+                    fontWeight: 'bold', 
+                    color: category === 'ETFs' ? '#38bdf8' : 'var(--accent-color)', // Sky blue para ETFs, Accent para Acciones
+                    letterSpacing: '0.1em',
+                    borderBottom: '1px solid var(--border-color)',
+                    background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%)'
+                  }}>
+                    {category.toUpperCase()}
                   </td>
-
-                  {/* Industria Badge */}
-                  <td>
-                    <div style={{
-                      display: 'inline-block',
-                      padding: '4px 10px',
-                      borderRadius: '4px', // Cuadrado redondeado para diferenciar
-                      fontSize: '0.65rem',
-                      fontWeight: 500,
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      letterSpacing: '0.02em',
-                      whiteSpace: 'nowrap'
-                    }}>
-                      {stock.industria}
-                    </div>
-                  </td>
-
-                  <td className="sticky-col" style={{ fontWeight: 600, color: '#fff' }}>{stock.symbol}</td>
-                  
-                  {/* Último Px y Moneda */}
-                  <td style={{ fontWeight: 500 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      {stock.c?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
-                      <span style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '4px',
-                        fontSize: '0.65rem',
-                        fontWeight: 'bold',
-                        backgroundColor: stock.moneda === 'USD' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(249, 115, 22, 0.2)',
-                        color: stock.moneda === 'USD' ? '#4ade80' : '#fb923c',
-                        border: `1px solid ${stock.moneda === 'USD' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(249, 115, 22, 0.4)'}`
-                      }}>
-                        {stock.moneda === 'USD' ? 'D' : 'P'}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className={(stock.pct_change || 0) >= 0 ? 'text-success' : 'text-danger'} style={{ fontWeight: 500 }}>
-                    {stock.pct_change > 0 ? '+' : ''}{stock.pct_change?.toFixed(2)}%
-                  </td>
-                  
-                  {/* Bid */}
-                  <td className="text-dim" style={{ padding: '1rem 0.7rem' }}>{stock.q_bid?.toLocaleString('es-AR')}</td>
-                  <td style={{ borderRight: '1px solid var(--border-color)', padding: '1rem 0.7rem' }}>
-                    {stock.px_bid?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
-                  </td>
-
-                  {/* Ask */}
-                  <td style={{ padding: '1rem 0.7rem' }}>{stock.px_ask?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
-                  <td className="text-dim" style={{ padding: '1rem 0.7rem' }}>{stock.q_ask?.toLocaleString('es-AR')}</td>
-
-                  {/* Spread % */}
-                  <td style={{ textAlign: 'center', color: stock.spread > 2 ? 'var(--danger)' : 'var(--text-dim)', borderLeft: '1px solid var(--border-color)' }}>
-                    {stock.spread > 0 ? `${stock.spread.toFixed(2)}%` : '-'}
-                  </td>
-
-                  {/* Volumen */}
-                  <td style={{ borderLeft: '1px solid var(--border-color)', minWidth: '150px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <span className="font-mono text-[0.85rem] font-medium text-gray-300">
-                        {stock.v?.toLocaleString('es-AR', { maximumFractionDigits: 0 }) || 0}
-                      </span>
-                    </div>
-                    <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', height: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${volPercentage}%`, backgroundColor: 'var(--accent-color)', height: '100%', borderRadius: '2px', transition: 'width 0.3s ease' }}></div>
-                    </div>
-                  </td>
-
-                  {/* Volumen $ */}
-                  <td style={{ minWidth: '170px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <span className="font-mono text-[0.85rem] font-medium text-emerald-400">
-                        $ {stock.vol_monto?.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
-                      </span>
-                    </div>
-                    <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', height: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${(stock.vol_monto / maxVolMonto) * 100}%`, backgroundColor: '#34d399', height: '100%', borderRadius: '2px', transition: 'width 0.3s ease' }}></div>
-                    </div>
-                  </td>
-
-                  {/* Ops */}
-                  <td style={{ minWidth: '100px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <span className="font-mono text-[0.85rem] text-gray-400">
-                        {stock.q_op?.toLocaleString('es-AR') || 0}
-                      </span>
-                    </div>
-                    <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', height: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${opsPercentage}%`, backgroundColor: 'var(--success)', height: '100%', borderRadius: '2px', transition: 'width 0.3s ease' }}></div>
-                    </div>
-                  </td>
-
-                  {/* Ticket Promedio */}
-                  <td className="font-mono" style={{ textAlign: 'right', color: 'var(--text-dim)' }}>
-                    {stock.avgTicket > 0 ? stock.avgTicket.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-'}
-                  </td>
-
                 </tr>
-              );
-            })}
-          </tbody>
+                {items.map((stock) => {
+                  const volPercentage = ((stock.v || 0) / maxVolume) * 100;
+                  const opsPercentage = ((stock.q_op || 0) / maxOps) * 100;
+                  const sectorColors = getSectorColor(stock.sector);
+
+                  return (
+                    <tr key={stock.symbol}>
+                      {/* Sector Badge */}
+                      <td style={{ paddingLeft: '1.5rem' }}>
+                        <div style={{
+                          display: 'inline-block',
+                          padding: '4px 10px',
+                          borderRadius: '12px',
+                          fontSize: '0.65rem',
+                          fontWeight: 600,
+                          backgroundColor: sectorColors.bg,
+                          color: sectorColors.text,
+                          border: `1px solid ${sectorColors.border}`,
+                          letterSpacing: '0.02em',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {stock.sector}
+                        </div>
+                      </td>
+
+                      {/* Industria Badge */}
+                      <td>
+                        <div style={{
+                          display: 'inline-block',
+                          padding: '4px 10px',
+                          borderRadius: '4px',
+                          fontSize: '0.65rem',
+                          fontWeight: 500,
+                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          letterSpacing: '0.02em',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {stock.industria}
+                        </div>
+                      </td>
+
+                      <td className="sticky-col" style={{ fontWeight: 600, color: '#fff' }}>{stock.symbol}</td>
+                      
+                      <td style={{ fontWeight: 500 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {stock.c?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                          <span style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '4px',
+                            fontSize: '0.65rem',
+                            fontWeight: 'bold',
+                            backgroundColor: stock.moneda === 'USD' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(249, 115, 22, 0.2)',
+                            color: stock.moneda === 'USD' ? '#4ade80' : '#fb923c',
+                            border: `1px solid ${stock.moneda === 'USD' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(249, 115, 22, 0.4)'}`
+                          }}>
+                            {stock.moneda === 'USD' ? 'D' : 'P'}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td className={(stock.pct_change || 0) >= 0 ? 'text-success' : 'text-danger'} style={{ fontWeight: 500 }}>
+                        {stock.pct_change > 0 ? '+' : ''}{stock.pct_change?.toFixed(2)}%
+                      </td>
+                      
+                      <td className="text-dim" style={{ padding: '1rem 0.7rem' }}>{stock.q_bid?.toLocaleString('es-AR')}</td>
+                      <td style={{ borderRight: '1px solid var(--border-color)', padding: '1rem 0.7rem' }}>
+                        {stock.px_bid?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                      </td>
+
+                      <td style={{ padding: '1rem 0.7rem' }}>{stock.px_ask?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</td>
+                      <td className="text-dim" style={{ padding: '1rem 0.7rem' }}>{stock.q_ask?.toLocaleString('es-AR')}</td>
+
+                      <td style={{ textAlign: 'center', color: stock.spread > 2 ? 'var(--danger)' : 'var(--text-dim)', borderLeft: '1px solid var(--border-color)' }}>
+                        {stock.spread > 0 ? `${stock.spread.toFixed(2)}%` : '-'}
+                      </td>
+
+                      <td style={{ borderLeft: '1px solid var(--border-color)', minWidth: '150px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span className="font-mono text-[0.85rem] font-medium text-gray-300">
+                            {stock.v?.toLocaleString('es-AR', { maximumFractionDigits: 0 }) || 0}
+                          </span>
+                        </div>
+                        <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', height: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: `${volPercentage}%`, backgroundColor: 'var(--accent-color)', height: '100%', borderRadius: '2px', transition: 'width 0.3s ease' }}></div>
+                        </div>
+                      </td>
+
+                      <td style={{ minWidth: '170px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span className="font-mono text-[0.85rem] font-medium text-emerald-400">
+                            $ {stock.vol_monto?.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+                          </span>
+                        </div>
+                        <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', height: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: `${(stock.vol_monto / maxVolMonto) * 100}%`, backgroundColor: '#34d399', height: '100%', borderRadius: '2px', transition: 'width 0.3s ease' }}></div>
+                        </div>
+                      </td>
+
+                      <td style={{ minWidth: '100px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span className="font-mono text-[0.85rem] text-gray-400">
+                            {stock.q_op?.toLocaleString('es-AR') || 0}
+                          </span>
+                        </div>
+                        <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', height: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: `${opsPercentage}%`, backgroundColor: 'var(--success)', height: '100%', borderRadius: '2px', transition: 'width 0.3s ease' }}></div>
+                        </div>
+                      </td>
+
+                      <td className="font-mono" style={{ textAlign: 'right', color: 'var(--text-dim)' }}>
+                        {stock.avgTicket > 0 ? stock.avgTicket.toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-'}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </React.Fragment>
+          ))}
         </table>
       </div>
     </div>

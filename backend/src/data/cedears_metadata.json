@@ -1,179 +1,1652 @@
 {
-  "NVDA": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "GOOGL": { "sector": "Servicios tecnológicos", "industria": "Servicios y software de Internet" },
-  "AAPL": { "sector": "Tecnología electrónica", "industria": "Equipos de telecomunicaciones" },
-  "MSFT": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "AMZN": { "sector": "Comercio minorista", "industria": "Internet para particulares" },
-  "AVGO": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "TSM": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "META": { "sector": "Servicios tecnológicos", "industria": "Servicios y software de Internet" },
-  "TSLA": { "sector": "Bienes de consumo duraderos", "industria": "Vehículos de motor" },
-  "BRKB": { "sector": "Finanzas", "industria": "Seguros patrimoniales y de accidentes" },
-  "BRK.B": { "sector": "Finanzas", "industria": "Seguros patrimoniales y de accidentes" },
-  "SSNLF": { "sector": "Tecnología electrónica", "industria": "Equipos de telecomunicaciones" },
-  "LLY": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "JPM": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "XOM": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  "V": { "sector": "Finanzas", "industria": "Rentas, alquiler y leasing" },
-  "JNJ": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "ASML": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "MU": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "MA": { "sector": "Finanzas", "industria": "Rentas, alquiler y leasing" },
-  "COST": { "sector": "Comercio minorista", "industria": "Tiendas especializadas" },
-  "NFLX": { "sector": "Servicios tecnológicos", "industria": "Servicios y software de Internet" },
-  "AMD": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "ORCL": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  
-  "KO": { "sector": "Consumibles perecederos", "industria": "Bebidas: Sin Alcohol" },
-  "PEP": { "sector": "Consumibles perecederos", "industria": "Comida: Especialidades y dulces" },
-  "MCD": { "sector": "Servicios al consumidor", "industria": "Restaurantes" },
-  "MELI": { "sector": "Comercio minorista", "industria": "Internet para particulares" },
-  "GLOB": { "sector": "Servicios tecnológicos", "industria": "Servicios de TI" },
-  "WMT": { "sector": "Comercio minorista", "industria": "Supermercados" },
-  "DIS": { "sector": "Servicios al consumidor", "industria": "Cine y entretenimiento" },
-  "PG": { "sector": "Consumibles perecederos", "industria": "Cuidado personal y doméstico" },
-  "INTC": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "PFE": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "BABA": { "sector": "Comercio minorista", "industria": "Internet para particulares" },
-  "QCOM": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "IBM": { "sector": "Servicios tecnológicos", "industria": "Servicios de tecnología de la información" },
-  
-  "BAC": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "CVX": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  "CAT": { "sector": "Fabricación de productos", "industria": "Maquinaria agrícola, de construcción y camiones" },
-  "ABBV": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "HD": { "sector": "Comercio minorista", "industria": "Cadenas de mejoras para el hogar" },
-  "LRCX": { "sector": "Fabricación de productos", "industria": "Maquinaria industrial" },
-  "CSCO": { "sector": "Tecnología electrónica", "industria": "Equipos de telecomunicaciones" },
-  "GE": { "sector": "Tecnología electrónica", "industria": "Aeroespacial y defensa" },
-  "AMAT": { "sector": "Fabricación de productos", "industria": "Maquinaria industrial" },
-  "HSBC": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "PLTR": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "MRK": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "NVS": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "UNH": { "sector": "Servicios de salud", "industria": "Atención médica administrada" },
-  "TM": { "sector": "Bienes de consumo duraderos", "industria": "Vehículos de motor" },
-  "RTX": { "sector": "Tecnología electrónica", "industria": "Aeroespacial y defensa" },
-  "GS": { "sector": "Finanzas", "industria": "Brokers y bancos de inversión" },
-  "WFC": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "SHEL": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  
-  "PM": { "sector": "Consumibles perecederos", "industria": "Tabaco" },
-  "C": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "TMUS": { "sector": "Comunicaciones", "industria": "Telecomunicaciones inalámbricas" },
-  "AXP": { "sector": "Finanzas", "industria": "Rentas, alquiler y leasing" },
-  "SIEGY": { "sector": "Fabricación de productos", "industria": "Maquinaria industrial" },
-  "MUFG": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "TTE": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  "TXN": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "BHP": { "sector": "Minerales no energéticos", "industria": "Acero" },
-  "VZ": { "sector": "Comunicaciones", "industria": "Telecomunicaciones inalámbricas" },
-  "SAP": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "AMGN": { "sector": "Tecnologías sanitarias", "industria": "Biotecnología" },
-  "T": { "sector": "Comunicaciones", "industria": "Telecomunicaciones inalámbricas" },
-  "TMO": { "sector": "Tecnologías sanitarias", "industria": "Especialidades médicas" },
-  "SAN": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "TJX": { "sector": "Comercio minorista", "industria": "Venta al por menor de ropa y calzado" },
-  "ABT": { "sector": "Tecnologías sanitarias", "industria": "Especialidades médicas" },
-  "GILD": { "sector": "Tecnologías sanitarias", "industria": "Biotecnología" },
-  "BA": { "sector": "Tecnología electrónica", "industria": "Aeroespacial y defensa" },
-  
-  "ADI": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "RIO": { "sector": "Minerales no energéticos", "industria": "Otros minerales y metales" },
-  "SCHW": { "sector": "Finanzas", "industria": "Brokers y bancos de inversión" },
-  "DE": { "sector": "Fabricación de productos", "industria": "Maquinaria agrícola, de construcción y camiones" },
-  "ISRG": { "sector": "Tecnologías sanitarias", "industria": "Especialidades médicas" },
-  "ARM": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "SCCO": { "sector": "Minerales no energéticos", "industria": "Otros minerales y metales" },
-  "CRM": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "HON": { "sector": "Tecnología electrónica", "industria": "Aeroespacial y defensa" },
-  "UNP": { "sector": "Transporte", "industria": "Ferrocarriles" },
-  "GLW": { "sector": "Tecnología electrónica", "industria": "Componentes electrónicos" },
-  "UBER": { "sector": "Transporte", "industria": "Otros medios de transporte" },
-  "LMT": { "sector": "Tecnología electrónica", "industria": "Aeroespacial y defensa" },
-  "PDD": { "sector": "Comercio minorista", "industria": "Grandes almacenes" },
-  "BKNG": { "sector": "Servicios al consumidor", "industria": "Otros servicios de consumo" },
-  "HDB": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "DHR": { "sector": "Tecnologías sanitarias", "industria": "Especialidades médicas" },
-  "NEM": { "sector": "Minerales no energéticos", "industria": "Metales preciosos" },
-  "BBVA": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "PBR": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  "SONY": { "sector": "Tecnología electrónica", "industria": "Hardware de procesamiento informático" },
-  "PANW": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "UL": { "sector": "Consumibles perecederos", "industria": "Cuidado personal y doméstico" },
-  "SPGI": { "sector": "Servicios comerciales", "industria": "Servicios y publicidad financiera" },
-  "BMY": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "BP": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  "GSK": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "MO": { "sector": "Consumibles perecederos", "industria": "Tabaco" },
-  "MRVL": { "sector": "Tecnología electrónica", "industria": "Semiconductores" },
-  "MDT": { "sector": "Tecnologías sanitarias", "industria": "Especialidades médicas" },
-  "VRTX": { "sector": "Tecnologías sanitarias", "industria": "Productos farmacéuticos: principales" },
-  "ACN": { "sector": "Servicios tecnológicos", "industria": "Servicios de tecnología de la información" },
-  "SBUX": { "sector": "Servicios al consumidor", "industria": "Restaurantes" },
-  "AEM": { "sector": "Minerales no energéticos", "industria": "Metales preciosos" },
-  "MFG": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "CEG": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "IBN": { "sector": "Finanzas", "industria": "Bancos regionales" },
-  "HWM": { "sector": "Tecnología electrónica", "industria": "Aeroespacial y defensa" },
-  "CVS": { "sector": "Comercio minorista", "industria": "Cadenas de farmacias" },
-  "ITUB": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "EQNR": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  "SPOT": { "sector": "Servicios tecnológicos", "industria": "Servicios y software de Internet" },
-  "FCX": { "sector": "Minerales no energéticos", "industria": "Otros minerales y metales" },
-  "ADBE": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "NGG": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "FDX": { "sector": "Transporte", "industria": "Carga aérea y mensajería" },
-  "BK": { "sector": "Finanzas", "industria": "Brokers y bancos de inversión" },
-  "JCI": { "sector": "Fabricación de productos", "industria": "Maquinaria industrial" },
-  "NOW": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "USB": { "sector": "Finanzas", "industria": "Bancos regionales" },
-  "AMX": { "sector": "Comunicaciones", "industria": "Telecomunicaciones inalámbricas" },
-  "RACE": { "sector": "Bienes de consumo duraderos", "industria": "Vehículos de motor" },
-  "E": { "sector": "Minerales energéticos", "industria": "Refinado de petróleo/comercialización" },
-  "ING": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "BCS": { "sector": "Finanzas", "industria": "Brokers y bancos de inversión" },
-  "LYG": { "sector": "Finanzas", "industria": "Bancos principales" },
-  "MMM": { "sector": "Fabricación de productos", "industria": "Conglomerados industriales" },
-  "ABNB": { "sector": "Servicios al consumidor", "industria": "Empresas de cruceros, hoteles y resorts" },
-  "ORLY": { "sector": "Comercio minorista", "industria": "Tiendas especializadas" },
-  "SLB": { "sector": "Servicios industriales", "industria": "Contrato de perforación" },
-  "ECL": { "sector": "Industrias de proceso", "industria": "Químicos: Productos especiales" },
-  "ADP": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "MDLZ": { "sector": "Consumibles perecederos", "industria": "Comida: Especialidades y dulces" },
-  "B": { "sector": "Minerales no energéticos", "industria": "Metales preciosos" },
-  "NU": { "sector": "Finanzas", "industria": "Bancos regionales" },
-  "VALE": { "sector": "Minerales no energéticos", "industria": "Acero" },
-  "MSI": { "sector": "Tecnología electrónica", "industria": "Equipos de telecomunicaciones" },
-  "ROST": { "sector": "Comercio minorista", "industria": "Venta al por menor de ropa y calzado" },
-  "NTES": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "GM": { "sector": "Bienes de consumo duraderos", "industria": "Vehículos de motor" },
-  "CL": { "sector": "Consumibles perecederos", "industria": "Cuidado personal y doméstico" },
-  "PCAR": { "sector": "Fabricación de productos", "industria": "Maquinaria agrícola, de construcción y camiones" },
-  "TRV": { "sector": "Finanzas", "industria": "Seguros patrimoniales y de accidentes" },
-  "PSX": { "sector": "Minerales energéticos", "industria": "Refinado de petróleo/comercialización" },
-  "NKE": { "sector": "Consumibles perecederos", "industria": "Ropa y calzado" },
-  "HOOD": { "sector": "Finanzas", "industria": "Brokers y bancos de inversión" },
-  "BKR": { "sector": "Servicios industriales", "industria": "Contrato de perforación" },
-  "OXY": { "sector": "Minerales energéticos", "industria": "Petrolera integrada" },
-  "INFY": { "sector": "Servicios tecnológicos", "industria": "Servicios de tecnología de la información" },
-  "ORANY": { "sector": "Comunicaciones", "industria": "Telecomunicaciones inalámbricas" },
-  "TGT": { "sector": "Comercio minorista", "industria": "Tiendas especializadas" },
-  "CRWD": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "CRWV": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "NOK": { "sector": "Tecnología electrónica", "industria": "Equipos de telecomunicaciones" },
-  "VST": { "sector": "Servicios públicos", "industria": "Eléctricas" },
-  "SE": { "sector": "Comercio minorista", "industria": "Internet para particulares" },
-  "EA": { "sector": "Servicios tecnológicos", "industria": "Software empaquetado" },
-  "CAH": { "sector": "Servicios de distribución", "industria": "Distribuidores médicos" },
-  "ABEV": { "sector": "Consumibles perecederos", "industria": "Bebidas: Alcohólicas" },
-  
-  "SPY": { "sector": "ETFs", "industria": "Index Funds" },
-  "QQQ": { "sector": "ETFs", "industria": "Index Funds" },
-  "DIA": { "sector": "ETFs", "industria": "Index Funds" },
-  "EEM": { "sector": "ETFs", "industria": "Index Funds" },
-  "EWZ": { "sector": "ETFs", "industria": "Index Funds" },
-  "ARKK": { "sector": "ETFs", "industria": "Innovation Funds" },
-  "XLE": { "sector": "ETFs", "industria": "Sector Funds" },
-  "XLF": { "sector": "ETFs", "industria": "Sector Funds" }
+  "NVDA": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "GOOGL": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "AAPL": {
+    "sector": "Tecnología electrónica",
+    "industria": "Equipos de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "MSFT": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "AMZN": {
+    "sector": "Comercio minorista",
+    "industria": "Internet para particulares",
+    "tipo_activo": "acciones"
+  },
+  "AVGO": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "TSM": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "META": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "TSLA": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "BRKB": {
+    "sector": "Finanzas",
+    "industria": "Seguros patrimoniales y de accidentes",
+    "tipo_activo": "acciones"
+  },
+  "BRK.B": {
+    "sector": "Finanzas",
+    "industria": "Seguros patrimoniales y de accidentes",
+    "tipo_activo": "acciones"
+  },
+  "SSNLF": {
+    "sector": "Tecnología electrónica",
+    "industria": "Equipos de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "LLY": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "JPM": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "XOM": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "V": {
+    "sector": "Finanzas",
+    "industria": "Rentas, alquiler y leasing",
+    "tipo_activo": "acciones"
+  },
+  "JNJ": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "ASML": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "MU": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "MA": {
+    "sector": "Finanzas",
+    "industria": "Rentas, alquiler y leasing",
+    "tipo_activo": "acciones"
+  },
+  "COST": {
+    "sector": "Comercio minorista",
+    "industria": "Tiendas especializadas",
+    "tipo_activo": "acciones"
+  },
+  "NFLX": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "AMD": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "ORCL": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "KO": {
+    "sector": "Consumibles perecederos",
+    "industria": "Bebidas: Sin Alcohol",
+    "tipo_activo": "acciones"
+  },
+  "PEP": {
+    "sector": "Consumibles perecederos",
+    "industria": "Comida: Especialidades y dulces",
+    "tipo_activo": "acciones"
+  },
+  "MCD": {
+    "sector": "Servicios al consumidor",
+    "industria": "Restaurantes",
+    "tipo_activo": "acciones"
+  },
+  "MELI": {
+    "sector": "Comercio minorista",
+    "industria": "Internet para particulares",
+    "tipo_activo": "acciones"
+  },
+  "GLOB": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de tecnología de la información",
+    "tipo_activo": "acciones"
+  },
+  "WMT": {
+    "sector": "Comercio minorista",
+    "industria": "Supermercados",
+    "tipo_activo": "acciones"
+  },
+  "DIS": {
+    "sector": "Servicios al consumidor",
+    "industria": "Cine y entretenimiento",
+    "tipo_activo": "acciones"
+  },
+  "PG": {
+    "sector": "Consumibles perecederos",
+    "industria": "Cuidado personal y doméstico",
+    "tipo_activo": "acciones"
+  },
+  "INTC": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "PFE": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "BABA": {
+    "sector": "Comercio minorista",
+    "industria": "Internet para particulares",
+    "tipo_activo": "acciones"
+  },
+  "QCOM": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "IBM": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de tecnología de la información",
+    "tipo_activo": "acciones"
+  },
+  "BAC": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "CVX": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "CAT": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria agrícola, de construcción y camiones",
+    "tipo_activo": "acciones"
+  },
+  "ABBV": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "HD": {
+    "sector": "Comercio minorista",
+    "industria": "Cadenas de mejoras para el hogar",
+    "tipo_activo": "acciones"
+  },
+  "LRCX": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria industrial",
+    "tipo_activo": "acciones"
+  },
+  "CSCO": {
+    "sector": "Tecnología electrónica",
+    "industria": "Equipos de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "GE": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "AMAT": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria industrial",
+    "tipo_activo": "acciones"
+  },
+  "HSBC": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "PLTR": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "MRK": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "NVS": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "UNH": {
+    "sector": "Servicios de salud",
+    "industria": "Atención médica administrada",
+    "tipo_activo": "acciones"
+  },
+  "TM": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "RTX": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "GS": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "WFC": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "SHEL": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "PM": {
+    "sector": "Consumibles perecederos",
+    "industria": "Tabaco",
+    "tipo_activo": "acciones"
+  },
+  "C": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "TMUS": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "AXP": {
+    "sector": "Finanzas",
+    "industria": "Rentas, alquiler y leasing",
+    "tipo_activo": "acciones"
+  },
+  "SIEGY": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria industrial",
+    "tipo_activo": "acciones"
+  },
+  "MUFG": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "TTE": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "TXN": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "BHP": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "VZ": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "SAP": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "AMGN": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Biotecnología",
+    "tipo_activo": "acciones"
+  },
+  "T": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "TMO": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Especialidades médicas",
+    "tipo_activo": "acciones"
+  },
+  "SAN": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "TJX": {
+    "sector": "Comercio minorista",
+    "industria": "Venta al por menor de ropa y calzado",
+    "tipo_activo": "acciones"
+  },
+  "ABT": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Especialidades médicas",
+    "tipo_activo": "acciones"
+  },
+  "GILD": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Biotecnología",
+    "tipo_activo": "acciones"
+  },
+  "BA": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "ADI": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "RIO": {
+    "sector": "Minerales no energéticos",
+    "industria": "Otros minerales y metales",
+    "tipo_activo": "acciones"
+  },
+  "SCHW": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "DE": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria agrícola, de construcción y camiones",
+    "tipo_activo": "acciones"
+  },
+  "ISRG": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Especialidades médicas",
+    "tipo_activo": "acciones"
+  },
+  "ARM": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "SCCO": {
+    "sector": "Minerales no energéticos",
+    "industria": "Otros minerales y metales",
+    "tipo_activo": "acciones"
+  },
+  "CRM": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "HON": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "UNP": {
+    "sector": "Transporte",
+    "industria": "Ferrocarriles",
+    "tipo_activo": "acciones"
+  },
+  "GLW": {
+    "sector": "Tecnología electrónica",
+    "industria": "Componentes electrónicos",
+    "tipo_activo": "acciones"
+  },
+  "UBER": {
+    "sector": "Transporte",
+    "industria": "Otros medios de transporte",
+    "tipo_activo": "acciones"
+  },
+  "LMT": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "PDD": {
+    "sector": "Comercio minorista",
+    "industria": "Grandes almacenes",
+    "tipo_activo": "acciones"
+  },
+  "BKNG": {
+    "sector": "Servicios al consumidor",
+    "industria": "Otros servicios de consumo",
+    "tipo_activo": "acciones"
+  },
+  "HDB": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "DHR": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Especialidades médicas",
+    "tipo_activo": "acciones"
+  },
+  "NEM": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "BBVA": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "PBR": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "SONY": {
+    "sector": "Tecnología electrónica",
+    "industria": "Hardware de procesamiento informático",
+    "tipo_activo": "acciones"
+  },
+  "PANW": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "UL": {
+    "sector": "Consumibles perecederos",
+    "industria": "Cuidado personal y doméstico",
+    "tipo_activo": "acciones"
+  },
+  "SPGI": {
+    "sector": "Servicios comerciales",
+    "industria": "Servicios y publicidad financiera",
+    "tipo_activo": "acciones"
+  },
+  "BMY": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "BP": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "GSK": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "MO": {
+    "sector": "Consumibles perecederos",
+    "industria": "Tabaco",
+    "tipo_activo": "acciones"
+  },
+  "MRVL": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "MDT": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Especialidades médicas",
+    "tipo_activo": "acciones"
+  },
+  "VRTX": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "ACN": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de tecnología de la información",
+    "tipo_activo": "acciones"
+  },
+  "SBUX": {
+    "sector": "Servicios al consumidor",
+    "industria": "Restaurantes",
+    "tipo_activo": "acciones"
+  },
+  "AEM": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "MFG": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "CEG": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "IBN": {
+    "sector": "Finanzas",
+    "industria": "Bancos regionales",
+    "tipo_activo": "acciones"
+  },
+  "HWM": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "CVS": {
+    "sector": "Comercio minorista",
+    "industria": "Cadenas de farmacias",
+    "tipo_activo": "acciones"
+  },
+  "ITUB": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "EQNR": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "SPOT": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "FCX": {
+    "sector": "Minerales no energéticos",
+    "industria": "Otros minerales y metales",
+    "tipo_activo": "acciones"
+  },
+  "ADBE": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "NGG": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "FDX": {
+    "sector": "Transporte",
+    "industria": "Carga aérea y mensajería",
+    "tipo_activo": "acciones"
+  },
+  "BK": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "JCI": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria industrial",
+    "tipo_activo": "acciones"
+  },
+  "NOW": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "USB": {
+    "sector": "Finanzas",
+    "industria": "Bancos regionales",
+    "tipo_activo": "acciones"
+  },
+  "AMX": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "RACE": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "E": {
+    "sector": "Minerales energéticos",
+    "industria": "Refinado de petróleo/comercialización",
+    "tipo_activo": "acciones"
+  },
+  "ING": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "BCS": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "LYG": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "MMM": {
+    "sector": "Fabricación de productos",
+    "industria": "Conglomerados industriales",
+    "tipo_activo": "acciones"
+  },
+  "ABNB": {
+    "sector": "Servicios al consumidor",
+    "industria": "Empresas de cruceros, hoteles y resorts",
+    "tipo_activo": "acciones"
+  },
+  "ORLY": {
+    "sector": "Comercio minorista",
+    "industria": "Tiendas especializadas",
+    "tipo_activo": "acciones"
+  },
+  "SLB": {
+    "sector": "Servicios industriales",
+    "industria": "Contrato de perforación",
+    "tipo_activo": "acciones"
+  },
+  "ECL": {
+    "sector": "Industrias de proceso",
+    "industria": "Químicos: Productos especiales",
+    "tipo_activo": "acciones"
+  },
+  "ADP": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "MDLZ": {
+    "sector": "Consumibles perecederos",
+    "industria": "Comida: Especialidades y dulces",
+    "tipo_activo": "acciones"
+  },
+  "B": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "NU": {
+    "sector": "Finanzas",
+    "industria": "Bancos regionales",
+    "tipo_activo": "acciones"
+  },
+  "VALE": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "MSI": {
+    "sector": "Tecnología electrónica",
+    "industria": "Equipos de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "ROST": {
+    "sector": "Comercio minorista",
+    "industria": "Venta al por menor de ropa y calzado",
+    "tipo_activo": "acciones"
+  },
+  "NTES": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "GM": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "CL": {
+    "sector": "Consumibles perecederos",
+    "industria": "Cuidado personal y doméstico",
+    "tipo_activo": "acciones"
+  },
+  "PCAR": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria agrícola, de construcción y camiones",
+    "tipo_activo": "acciones"
+  },
+  "TRV": {
+    "sector": "Finanzas",
+    "industria": "Seguros patrimoniales y de accidentes",
+    "tipo_activo": "acciones"
+  },
+  "PSX": {
+    "sector": "Minerales energéticos",
+    "industria": "Refinado de petróleo/comercialización",
+    "tipo_activo": "acciones"
+  },
+  "NKE": {
+    "sector": "Consumibles perecederos",
+    "industria": "Ropa y calzado",
+    "tipo_activo": "acciones"
+  },
+  "HOOD": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "BKR": {
+    "sector": "Servicios industriales",
+    "industria": "Contrato de perforación",
+    "tipo_activo": "acciones"
+  },
+  "OXY": {
+    "sector": "Minerales energéticos",
+    "industria": "Petrolera integrada",
+    "tipo_activo": "acciones"
+  },
+  "INFY": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de tecnología de la información",
+    "tipo_activo": "acciones"
+  },
+  "ORANY": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "TGT": {
+    "sector": "Comercio minorista",
+    "industria": "Tiendas especializadas",
+    "tipo_activo": "acciones"
+  },
+  "CRWD": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "CRWV": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "NOK": {
+    "sector": "Tecnología electrónica",
+    "industria": "Equipos de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "VST": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "SE": {
+    "sector": "Comercio minorista",
+    "industria": "Internet para particulares",
+    "tipo_activo": "acciones"
+  },
+  "EA": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "CAH": {
+    "sector": "Servicios de distribución",
+    "industria": "Distribuidores médicos",
+    "tipo_activo": "acciones"
+  },
+  "ABEV": {
+    "sector": "Consumibles perecederos",
+    "industria": "Bebidas: Alcohólicas",
+    "tipo_activo": "acciones"
+  },
+  "GRMN": {
+    "sector": "Tecnología electrónica",
+    "industria": "Equipos de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "F": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "DAL": {
+    "sector": "Transporte",
+    "industria": "Aerolíneas",
+    "tipo_activo": "acciones"
+  },
+  "MSTR": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "COIN": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "GFI": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "DEO": {
+    "sector": "Consumibles perecederos",
+    "industria": "Bebidas: Alcohólicas",
+    "tipo_activo": "acciones"
+  },
+  "EBAY": {
+    "sector": "Comercio minorista",
+    "industria": "Internet para particulares",
+    "tipo_activo": "acciones"
+  },
+  "NUE": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "SNOW": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "PYPL": {
+    "sector": "Servicios comerciales",
+    "industria": "Servicios comerciales diversos",
+    "tipo_activo": "acciones"
+  },
+  "AIG": {
+    "sector": "Finanzas",
+    "industria": "Seguro multiramo",
+    "tipo_activo": "acciones"
+  },
+  "HSY": {
+    "sector": "Consumibles perecederos",
+    "industria": "Comida: Especialidades y dulces",
+    "tipo_activo": "acciones"
+  },
+  "KGC": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "CLS": {
+    "sector": "Tecnología electrónica",
+    "industria": "Componentes electrónicos",
+    "tipo_activo": "acciones"
+  },
+  "PCRFF": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Electrónica y electrodomésticos",
+    "tipo_activo": "acciones"
+  },
+  "ERIC": {
+    "sector": "Tecnología electrónica",
+    "industria": "Equipos de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "BBD": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "RBLX": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "RKLB": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "CCL": {
+    "sector": "Servicios al consumidor",
+    "industria": "Empresas de cruceros, hoteles y resorts",
+    "tipo_activo": "acciones"
+  },
+  "KB": {
+    "sector": "Finanzas",
+    "industria": "Bancos regionales",
+    "tipo_activo": "acciones"
+  },
+  "XYZ": {
+    "sector": "Servicios comerciales",
+    "industria": "Servicios comerciales diversos",
+    "tipo_activo": "acciones"
+  },
+  "JD": {
+    "sector": "Comercio minorista",
+    "industria": "Internet para particulares",
+    "tipo_activo": "acciones"
+  },
+  "BIDU": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "VOD": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "ASTS": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones especializadas",
+    "tipo_activo": "acciones"
+  },
+  "LVS": {
+    "sector": "Servicios al consumidor",
+    "industria": "Casinos y juegos",
+    "tipo_activo": "acciones"
+  },
+  "SYY": {
+    "sector": "Servicios de distribución",
+    "industria": "Distribuidores de alimentos",
+    "tipo_activo": "acciones"
+  },
+  "TCOM": {
+    "sector": "Servicios al consumidor",
+    "industria": "Otros servicios de consumo",
+    "tipo_activo": "acciones"
+  },
+  "KMB": {
+    "sector": "Consumibles perecederos",
+    "industria": "Cuidado personal y doméstico",
+    "tipo_activo": "acciones"
+  },
+  "TS": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "HAL": {
+    "sector": "Servicios industriales",
+    "industria": "Equipos y servicios de yacimientos petrolíferos",
+    "tipo_activo": "acciones"
+  },
+  "UAL": {
+    "sector": "Transporte",
+    "industria": "Aerolíneas",
+    "tipo_activo": "acciones"
+  },
+  "HMC": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "STLA": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "AXIA": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "DOW": {
+    "sector": "Industrias de proceso",
+    "industria": "Químicos: Productos especiales",
+    "tipo_activo": "acciones"
+  },
+  "TEFOF": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones especializadas",
+    "tipo_activo": "acciones"
+  },
+  "VIV": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "PHG": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Especialidades médicas",
+    "tipo_activo": "acciones"
+  },
+  "BIIB": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "ALAB": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "PAAS": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "BG": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "VRSN": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "BSBR": {
+    "sector": "Finanzas",
+    "industria": "Bancos principales",
+    "tipo_activo": "acciones"
+  },
+  "SBS": {
+    "sector": "Servicios públicos",
+    "industria": "Empresas de suministro de agua",
+    "tipo_activo": "acciones"
+  },
+  "NMR": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "FMX": {
+    "sector": "Consumibles perecederos",
+    "industria": "Bebidas: Sin Alcohol",
+    "tipo_activo": "acciones"
+  },
+  "ZM": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "FSLR": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "EFX": {
+    "sector": "Servicios comerciales",
+    "industria": "Servicios y publicidad financiera",
+    "tipo_activo": "acciones"
+  },
+  "CDE": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "MRNA": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Biotecnología",
+    "tipo_activo": "acciones"
+  },
+  "SNA": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Herramientas y hardware",
+    "tipo_activo": "acciones"
+  },
+  "DD": {
+    "sector": "Industrias de proceso",
+    "industria": "Químicos: principales diversificados",
+    "tipo_activo": "acciones"
+  },
+  "IP": {
+    "sector": "Industrias de proceso",
+    "industria": "Pasta y papel",
+    "tipo_activo": "acciones"
+  },
+  "KEP": {
+    "sector": "Servicios públicos",
+    "industria": "Eléctricas",
+    "tipo_activo": "acciones"
+  },
+  "IFF": {
+    "sector": "Consumibles perecederos",
+    "industria": "Comida: Especialidades y dulces",
+    "tipo_activo": "acciones"
+  },
+  "PKX": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "CX": {
+    "sector": "Minerales no energéticos",
+    "industria": "Materiales de construcción",
+    "tipo_activo": "acciones"
+  },
+  "TWLO": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "HPQ": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de tecnología de la información",
+    "tipo_activo": "acciones"
+  },
+  "TIIAY": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "XPEV": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "DECK": {
+    "sector": "Consumibles perecederos",
+    "industria": "Ropa y calzado",
+    "tipo_activo": "acciones"
+  },
+  "TEAM": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "ROKU": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "AVY": {
+    "sector": "Industrias de proceso",
+    "industria": "Pasta y papel",
+    "tipo_activo": "acciones"
+  },
+  "TIMB": {
+    "sector": "Comunicaciones",
+    "industria": "Telecomunicaciones inalámbricas",
+    "tipo_activo": "acciones"
+  },
+  "HL": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "IREN": {
+    "sector": "Tecnología electrónica",
+    "industria": "Servicios de procesamiento de datos",
+    "tipo_activo": "acciones"
+  },
+  "NIO": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "MOD": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria industrial",
+    "tipo_activo": "acciones"
+  },
+  "EMBJ": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "PAC": {
+    "sector": "Transporte",
+    "industria": "Otros medios de transporte",
+    "tipo_activo": "acciones"
+  },
+  "AEG": {
+    "sector": "Finanzas",
+    "industria": "Seguro multiramo",
+    "tipo_activo": "acciones"
+  },
+  "SUZ": {
+    "sector": "Industrias de proceso",
+    "industria": "Pasta y papel",
+    "tipo_activo": "acciones"
+  },
+  "PINS": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "CAR": {
+    "sector": "Finanzas",
+    "industria": "Rentas, alquiler y leasing",
+    "tipo_activo": "acciones"
+  },
+  "XP": {
+    "sector": "Finanzas",
+    "industria": "Brokers y bancos de inversión",
+    "tipo_activo": "acciones"
+  },
+  "HMY": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "ASR": {
+    "sector": "Transporte",
+    "industria": "Otros medios de transporte",
+    "tipo_activo": "acciones"
+  },
+  "FNMA": {
+    "sector": "Finanzas",
+    "industria": "Rentas, alquiler y leasing",
+    "tipo_activo": "acciones"
+  },
+  "OKLO": {
+    "sector": "Fabricación de productos",
+    "industria": "Maquinaria industrial",
+    "tipo_activo": "acciones"
+  },
+  "SWKS": {
+    "sector": "Tecnología electrónica",
+    "industria": "Semiconductores",
+    "tipo_activo": "acciones"
+  },
+  "DOCU": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "NSANF": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "TX": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "PSO": {
+    "sector": "Servicios al consumidor",
+    "industria": "Publicación: Libros y revistas",
+    "tipo_activo": "acciones"
+  },
+  "SNAP": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "MOS": {
+    "sector": "Industrias de proceso",
+    "industria": "Químicos: Agricultura",
+    "tipo_activo": "acciones"
+  },
+  "NSANY": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "GGB": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "TEM": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "NXE": {
+    "sector": "Minerales no energéticos",
+    "industria": "Otros minerales y metales",
+    "tipo_activo": "acciones"
+  },
+  "AAL": {
+    "sector": "Transporte",
+    "industria": "Aerolíneas",
+    "tipo_activo": "acciones"
+  },
+  "HUT": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de procesamiento de datos",
+    "tipo_activo": "acciones"
+  },
+  "UGP": {
+    "sector": "Comercio minorista",
+    "industria": "Tiendas especializadas",
+    "tipo_activo": "acciones"
+  },
+  "RIOT": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de tecnología de la información",
+    "tipo_activo": "acciones"
+  },
+  "VIST": {
+    "sector": "Minerales energéticos",
+    "industria": "Producción de petróleo y gas",
+    "tipo_activo": "acciones"
+  },
+  "URBN": {
+    "sector": "Comercio minorista",
+    "industria": "Venta al por menor de ropa y calzado",
+    "tipo_activo": "acciones"
+  },
+  "KOF": {
+    "sector": "Consumibles perecederos",
+    "industria": "Bebidas: Sin Alcohol",
+    "tipo_activo": "acciones"
+  },
+  "ETSY": {
+    "sector": "Comercio minorista",
+    "industria": "Internet para particulares",
+    "tipo_activo": "acciones"
+  },
+  "PATH": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "RGTI": {
+    "sector": "Tecnología electrónica",
+    "industria": "Hardware de procesamiento informático",
+    "tipo_activo": "acciones"
+  },
+  "FMCC": {
+    "sector": "Finanzas",
+    "industria": "Rentas, alquiler y leasing",
+    "tipo_activo": "acciones"
+  },
+  "ANF": {
+    "sector": "Comercio minorista",
+    "industria": "Venta al por menor de ropa y calzado",
+    "tipo_activo": "acciones"
+  },
+  "CAAP": {
+    "sector": "Transporte",
+    "industria": "Otros medios de transporte",
+    "tipo_activo": "acciones"
+  },
+  "NG": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "AKO.B": {
+    "sector": "Consumibles perecederos",
+    "industria": "Bebidas: Sin Alcohol",
+    "tipo_activo": "acciones"
+  },
+  "STNE": {
+    "sector": "Servicios comerciales",
+    "industria": "Servicios comerciales diversos",
+    "tipo_activo": "acciones"
+  },
+  "AAP": {
+    "sector": "Comercio minorista",
+    "industria": "Tiendas especializadas",
+    "tipo_activo": "acciones"
+  },
+  "PAGS": {
+    "sector": "Servicios comerciales",
+    "industria": "Servicios comerciales diversos",
+    "tipo_activo": "acciones"
+  },
+  "JOYY": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de procesamiento de datos",
+    "tipo_activo": "acciones"
+  },
+  "UPST": {
+    "sector": "Finanzas",
+    "industria": "Rentas, alquiler y leasing",
+    "tipo_activo": "acciones"
+  },
+  "HOG": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Vehículos de motor",
+    "tipo_activo": "acciones"
+  },
+  "BB": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "WB": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "AGRO": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "GT": {
+    "sector": "Bienes de consumo duraderos",
+    "industria": "Mercado de repuestos de automoción",
+    "tipo_activo": "acciones"
+  },
+  "ARCO": {
+    "sector": "Servicios al consumidor",
+    "industria": "Restaurantes",
+    "tipo_activo": "acciones"
+  },
+  "PBI": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "SID": {
+    "sector": "Minerales no energéticos",
+    "industria": "Acero",
+    "tipo_activo": "acciones"
+  },
+  "YELP": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "TV": {
+    "sector": "Comunicaciones",
+    "industria": "Principales empresas de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "LAC": {
+    "sector": "Minerales no energéticos",
+    "industria": "Otros minerales y metales",
+    "tipo_activo": "acciones"
+  },
+  "MUX": {
+    "sector": "Minerales no energéticos",
+    "industria": "Metales preciosos",
+    "tipo_activo": "acciones"
+  },
+  "BAK": {
+    "sector": "Industrias de proceso",
+    "industria": "Químicos: Productos especiales",
+    "tipo_activo": "acciones"
+  },
+  "TRIP": {
+    "sector": "Servicios al consumidor",
+    "industria": "Otros servicios de consumo",
+    "tipo_activo": "acciones"
+  },
+  "LAR": {
+    "sector": "Minerales no energéticos",
+    "industria": "Otros minerales y metales",
+    "tipo_activo": "acciones"
+  },
+  "AI": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "SATL": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "JMIA": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "GPRK": {
+    "sector": "Minerales energéticos",
+    "industria": "Producción de petróleo y gas",
+    "tipo_activo": "acciones"
+  },
+  "PKSHF": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Software empaquetado",
+    "tipo_activo": "acciones"
+  },
+  "LND": {
+    "sector": "Finanzas",
+    "industria": "Desarrollo inmobiliario",
+    "tipo_activo": "acciones"
+  },
+  "SI": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Especialidades médicas",
+    "tipo_activo": "acciones"
+  },
+  "SPCE": {
+    "sector": "Tecnología electrónica",
+    "industria": "Aeroespacial y defensa",
+    "tipo_activo": "acciones"
+  },
+  "LFCR": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "XRX": {
+    "sector": "Tecnología electrónica",
+    "industria": "Periféricos informáticos",
+    "tipo_activo": "acciones"
+  },
+  "BIOX": {
+    "sector": "Industrias de proceso",
+    "industria": "Químicos: Agricultura",
+    "tipo_activo": "acciones"
+  },
+  "SHOP": {
+    "sector": "Servicios comerciales",
+    "industria": "Servicios comerciales diversos",
+    "tipo_activo": "acciones"
+  },
+  "ADGO": {
+    "sector": "Industrias de proceso",
+    "industria": "Productos agrícolas y de molienda",
+    "tipo_activo": "acciones"
+  },
+  "KEEL": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios de procesamiento de datos",
+    "tipo_activo": "acciones"
+  },
+  "TEN": {
+    "sector": "Transporte",
+    "industria": "Navegación marítima",
+    "tipo_activo": "acciones"
+  },
+  "TRVV": {
+    "sector": "Finanzas",
+    "industria": "Seguros patrimoniales y de accidentes",
+    "tipo_activo": "acciones"
+  },
+  "SMSN": {
+    "sector": "Tecnología electrónica",
+    "industria": "Equipo de telecomunicaciones",
+    "tipo_activo": "acciones"
+  },
+  "SHC": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Especialidades médicas",
+    "tipo_activo": "acciones"
+  },
+  "BAYN": {
+    "sector": "Tecnologías sanitarias",
+    "industria": "Productos farmacéuticos: principales",
+    "tipo_activo": "acciones"
+  },
+  "GOGL": {
+    "sector": "Servicios tecnológicos",
+    "industria": "Servicios y software de Internet",
+    "tipo_activo": "acciones"
+  },
+  "ETHA": {
+    "sector": "ETFs",
+    "industria": "Crypto Funds",
+    "tipo_activo": "etf"
+  },
+  "IBIT": {
+    "sector": "ETFs",
+    "industria": "Crypto Funds",
+    "tipo_activo": "etf"
+  },
+  "GLD": {
+    "sector": "ETFs",
+    "industria": "Commodity Funds",
+    "tipo_activo": "etf"
+  },
+  "TQQQ": {
+    "sector": "ETFs",
+    "industria": "Leveraged Funds",
+    "tipo_activo": "etf"
+  },
+  "IWM": {
+    "sector": "ETFs",
+    "industria": "Index Funds",
+    "tipo_activo": "etf"
+  },
+  "SH": {
+    "sector": "ETFs",
+    "industria": "Inverse Funds",
+    "tipo_activo": "etf"
+  },
+  "SPY": {
+    "sector": "ETFs",
+    "industria": "Index Funds",
+    "tipo_activo": "etf"
+  },
+  "QQQ": {
+    "sector": "ETFs",
+    "industria": "Index Funds",
+    "tipo_activo": "etf"
+  },
+  "DIA": {
+    "sector": "ETFs",
+    "industria": "Index Funds",
+    "tipo_activo": "etf"
+  },
+  "EEM": {
+    "sector": "ETFs",
+    "industria": "Index Funds",
+    "tipo_activo": "etf"
+  },
+  "EWZ": {
+    "sector": "ETFs",
+    "industria": "Index Funds",
+    "tipo_activo": "etf"
+  },
+  "ARKK": {
+    "sector": "ETFs",
+    "industria": "Innovation Funds",
+    "tipo_activo": "etf"
+  },
+  "XLE": {
+    "sector": "ETFs",
+    "industria": "Sector Funds",
+    "tipo_activo": "etf"
+  },
+  "XLF": {
+    "sector": "ETFs",
+    "industria": "Sector Funds",
+    "tipo_activo": "etf"
+  }
 }

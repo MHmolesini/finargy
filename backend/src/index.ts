@@ -124,7 +124,7 @@ app.get('/api/stocks', async (req: Request, res: Response) => {
     try {
       // Cargamos metadatos dinámicamente en cada petición para no requerir reinicios del server
       const stocksMetadataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'stocks_metadata.json'), 'utf8'));
-      const stocksMetadata = stocksMetadataRaw as Record<string, { sector: string, industria: string }>;
+      const stocksMetadata = stocksMetadataRaw as Record<string, { sector: string, industria: string, tipo_activo?: string }>;
 
       const response = await axios.get('https://data912.com/live/arg_stocks');
       const rawData = response.data;
@@ -134,17 +134,20 @@ app.get('/api/stocks', async (req: Request, res: Response) => {
         let baseSymbol = stock.symbol;
         let moneda = 'ARS';
 
-        // Detectar si cotiza en dólares y armar root symbol (ej: GGALD -> GGAL)
+        // Lógica de Moneda (General: D = USD MEP, C = USD CCL)
         if (baseSymbol.endsWith('D') && baseSymbol.length > 2) {
             moneda = 'USD';
-            // Validamos contra metadata para asegurar que es un Dólar Variante y no una acción que naturalmente termina en D (ej: EDN, PAMP no terminan D, YPFD sí, pero YPFDD es dolar)
-            // Lógica: Si sacándole la última D encontramos un padre, es USD.
             const potentialParent = baseSymbol.slice(0, -1);
             if (stocksMetadata[potentialParent]) {
                 baseSymbol = potentialParent;
             } else if (baseSymbol === 'YPFD') {
-                // Caso excepcional, YPFD es peso. YPFDD es USD.
-                moneda = 'ARS'; 
+                moneda = 'ARS'; // Excepción específica: YPFD es peso
+            }
+        } else if (baseSymbol.endsWith('C') && baseSymbol.length > 2) {
+            moneda = 'USD';
+            const potentialParent = baseSymbol.slice(0, -1);
+            if (stocksMetadata[potentialParent]) {
+                baseSymbol = potentialParent;
             }
         }
         
@@ -155,12 +158,14 @@ app.get('/api/stocks', async (req: Request, res: Response) => {
         // Mapeo Sectorial e Industrial
         const sector = stocksMetadata[baseSymbol]?.sector || 'General';
         const industria = stocksMetadata[baseSymbol]?.industria || 'General';
+        const tipo_activo = stocksMetadata[baseSymbol]?.tipo_activo || 'acciones';
 
         return {
             ...stock,
             sector,
             industria,
-            moneda
+            moneda,
+            tipo_activo
         };
       });
 
@@ -173,7 +178,7 @@ app.get('/api/stocks', async (req: Request, res: Response) => {
 app.get('/api/cedears', async (req: Request, res: Response) => {
     try {
       const cedearsMetadataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'cedears_metadata.json'), 'utf8'));
-      const cedearsMetadata = cedearsMetadataRaw as Record<string, { sector: string, industria: string }>;
+      const cedearsMetadata = cedearsMetadataRaw as Record<string, { sector: string, industria: string, tipo_activo?: string }>;
 
       const response = await axios.get('https://data912.com/live/arg_cedears');
       const rawData = response.data;
@@ -184,10 +189,10 @@ app.get('/api/cedears', async (req: Request, res: Response) => {
 
         // Detectar si cotiza en dólares MEP (D) o CCL (C)
         if (baseSymbol.endsWith('D') || baseSymbol.endsWith('C')) {
+            moneda = 'USD';
             const potentialParent = baseSymbol.slice(0, -1);
             if (cedearsMetadata[potentialParent]) {
                 baseSymbol = potentialParent;
-                moneda = 'USD';
             }
         }
         
@@ -201,12 +206,14 @@ app.get('/api/cedears', async (req: Request, res: Response) => {
 
         const sector = cedearsMetadata[baseSymbol]?.sector || 'General';
         const industria = cedearsMetadata[baseSymbol]?.industria || 'General';
+        const tipo_activo = cedearsMetadata[baseSymbol]?.tipo_activo || 'acciones';
 
         return {
             ...cedear,
             sector,
             industria,
-            moneda
+            moneda,
+            tipo_activo
         };
       });
 
