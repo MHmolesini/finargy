@@ -17,6 +17,7 @@ const StocksDashboard = () => {
   // Estados del Menú Sticky Multiselect
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const [selectedTrends, setSelectedTrends] = useState<('positive' | 'neutral' | 'negative')[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isIndustryFilterOpen, setIsIndustryFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
@@ -105,6 +106,24 @@ const StocksDashboard = () => {
     return Object.entries(counts).sort((a,b) => b[1] - a[1]);
   }, [data, selectedSectors]);
 
+  // Algoritmo Analítico 3: Conteo de Tendencias de Mercado (Semáforo)
+  const trendCounts = useMemo(() => {
+    let pos = 0, neu = 0, neg = 0;
+    const baseData = data.filter(d => {
+       if (selectedSectors.length > 0 && !selectedSectors.includes(d.sector || 'General')) return false;
+       if (selectedIndustries.length > 0 && !selectedIndustries.includes(d.industria || 'General')) return false;
+       return true;
+    });
+
+    baseData.forEach(stock => {
+       const pct = stock.pct_change || 0;
+       if (pct > 0) pos++;
+       else if (pct < 0) neg++;
+       else neu++;
+    });
+    return { positive: pos, neutral: neu, negative: neg };
+  }, [data, selectedSectors, selectedIndustries]);
+
   // Algoritmo Analítico 2: Filtrado Global Dinámico Combinado
   const filteredData = useMemo(() => {
     let result = data;
@@ -114,8 +133,17 @@ const StocksDashboard = () => {
     if (selectedIndustries.length > 0) {
       result = result.filter(stock => selectedIndustries.includes(stock.industria || 'General'));
     }
+    if (selectedTrends.length > 0) {
+      result = result.filter(stock => {
+        const pct = stock.pct_change || 0;
+        if (pct > 0 && selectedTrends.includes('positive')) return true;
+        if (pct < 0 && selectedTrends.includes('negative')) return true;
+        if (pct === 0 && selectedTrends.includes('neutral')) return true;
+        return false;
+      });
+    }
     return result;
-  }, [data, selectedSectors, selectedIndustries]);
+  }, [data, selectedSectors, selectedIndustries, selectedTrends]);
 
   const toggleSector = (sector: string) => {
     setSelectedSectors(prev => 
@@ -126,6 +154,12 @@ const StocksDashboard = () => {
   const toggleIndustry = (ind: string) => {
     setSelectedIndustries(prev => 
       prev.includes(ind) ? prev.filter(s => s !== ind) : [...prev, ind]
+    );
+  };
+
+  const toggleTrend = (trend: 'positive' | 'neutral' | 'negative') => {
+    setSelectedTrends(prev => 
+      prev.includes(trend) ? prev.filter(t => t !== trend) : [...prev, trend]
     );
   };
 
@@ -299,6 +333,48 @@ const StocksDashboard = () => {
                   </div>
                </div>
              )}
+           </div>
+
+           {/* BOTONES TENDENCIA (SEMÁFORO) */}
+           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginLeft: '8px', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '16px' }}>
+             <button 
+               onClick={() => toggleTrend('positive')}
+               style={{
+                 display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px',
+                 backgroundColor: selectedTrends.includes('positive') ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.03)', 
+                 borderRadius: '20px', color: selectedTrends.includes('positive') ? '#10b981' : '#cbd5e1', 
+                 fontSize: '0.75rem', fontWeight: 600, border: `1px solid ${selectedTrends.includes('positive') ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.05)'}`, transition: 'all 0.2s', cursor: 'pointer'
+               }}
+             >
+               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981', boxShadow: selectedTrends.includes('positive') ? '0 0 8px #10b981' : 'none' }}></div>
+               Alzas <span style={{ opacity: 0.6 }}>{trendCounts.positive}</span>
+             </button>
+
+             <button 
+               onClick={() => toggleTrend('neutral')}
+               style={{
+                 display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px',
+                 backgroundColor: selectedTrends.includes('neutral') ? 'rgba(148,163,184,0.15)' : 'rgba(255,255,255,0.03)', 
+                 borderRadius: '20px', color: selectedTrends.includes('neutral') ? '#94a3b8' : '#cbd5e1', 
+                 fontSize: '0.75rem', fontWeight: 600, border: `1px solid ${selectedTrends.includes('neutral') ? 'rgba(148,163,184,0.3)' : 'rgba(255,255,255,0.05)'}`, transition: 'all 0.2s', cursor: 'pointer'
+               }}
+             >
+               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#94a3b8' }}></div>
+               Neutras <span style={{ opacity: 0.6 }}>{trendCounts.neutral}</span>
+             </button>
+
+             <button 
+               onClick={() => toggleTrend('negative')}
+               style={{
+                 display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px',
+                 backgroundColor: selectedTrends.includes('negative') ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.03)', 
+                 borderRadius: '20px', color: selectedTrends.includes('negative') ? '#ef4444' : '#cbd5e1', 
+                 fontSize: '0.75rem', fontWeight: 600, border: `1px solid ${selectedTrends.includes('negative') ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.05)'}`, transition: 'all 0.2s', cursor: 'pointer'
+               }}
+             >
+               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#ef4444', boxShadow: selectedTrends.includes('negative') ? '0 0 8px #ef4444' : 'none' }}></div>
+               Bajas <span style={{ opacity: 0.6 }}>{trendCounts.negative}</span>
+             </button>
            </div>
          </div>
          
