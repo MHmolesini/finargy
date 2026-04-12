@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import NotesTable from './NotesTable';
 import YieldCurveChart from './YieldCurveChart';
+import MarketHeatmap from './MarketHeatmap';
 
 export interface BaseNote {
   symbol: string;
@@ -188,6 +189,9 @@ const MarketDashboard = () => {
       <div className="flex-grow min-w-0">
         <NotesTable notes={processedNotes} />
       </div>
+
+      {/* MAPA DE CALOR GLOBAL */}
+      <MarketHeatmap notes={[...notesData, ...bondsData]} />
     </div>
   );
 };

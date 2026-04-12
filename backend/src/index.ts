@@ -13,6 +13,10 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// Cargamos la base de datos de letes/bonos en memoria (estática)
+const symbolsMetadataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'symbols_metadata.json'), 'utf8'));
+let symbolsMetadata = symbolsMetadataRaw;
+
 // Ruta al archivo de metadatos
 const METADATA_PATH = path.join(__dirname, 'data', 'symbols_metadata.json');
 
@@ -116,11 +120,51 @@ app.get('/api/bonds', async (req: Request, res: Response) => {
   }
 });
 
-// Futuro: Endpoint para otros tipos de activos
 app.get('/api/stocks', async (req: Request, res: Response) => {
     try {
+      // Cargamos metadatos dinámicamente en cada petición para no requerir reinicios del server
+      const stocksMetadataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'stocks_metadata.json'), 'utf8'));
+      const stocksMetadata = stocksMetadataRaw as Record<string, { sector: string, industria: string }>;
+
       const response = await axios.get('https://data912.com/live/arg_stocks');
-      res.json(response.data);
+      const rawData = response.data;
+
+      // Enriquecimiento de datos con Sector y Moneda
+      const enrichedStocks = rawData.map((stock: any) => {
+        let baseSymbol = stock.symbol;
+        let moneda = 'ARS';
+
+        // Detectar si cotiza en dólares y armar root symbol (ej: GGALD -> GGAL)
+        if (baseSymbol.endsWith('D') && baseSymbol.length > 2) {
+            moneda = 'USD';
+            // Validamos contra metadata para asegurar que es un Dólar Variante y no una acción que naturalmente termina en D (ej: EDN, PAMP no terminan D, YPFD sí, pero YPFDD es dolar)
+            // Lógica: Si sacándole la última D encontramos un padre, es USD.
+            const potentialParent = baseSymbol.slice(0, -1);
+            if (stocksMetadata[potentialParent]) {
+                baseSymbol = potentialParent;
+            } else if (baseSymbol === 'YPFD') {
+                // Caso excepcional, YPFD es peso. YPFDD es USD.
+                moneda = 'ARS'; 
+            }
+        }
+        
+        // Excepciones manuales base (Byma Dolar Mep)
+        if (stock.symbol === 'BMA.D') { baseSymbol = 'BMA'; moneda = 'USD'; }
+        if (stock.symbol === 'ALUAD') { baseSymbol = 'ALUA'; moneda = 'USD'; }
+
+        // Mapeo Sectorial e Industrial
+        const sector = stocksMetadata[baseSymbol]?.sector || 'General';
+        const industria = stocksMetadata[baseSymbol]?.industria || 'General';
+
+        return {
+            ...stock,
+            sector,
+            industria,
+            moneda
+        };
+      });
+
+      res.json(enrichedStocks);
     } catch (error) {
       res.status(500).json({ error: 'Error al obtener datos de stocks' });
     }

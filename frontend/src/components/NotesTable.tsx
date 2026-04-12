@@ -178,12 +178,20 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                       </td>
 
                       {/* Volumen */}
-                      <td style={{ minWidth: '140px', borderLeft: '1px solid var(--border-color)' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                          <span>{note.v?.toLocaleString('es-AR')}</span>
-                          <div className="bar-container">
-                            <div className="bar-fill" style={{ width: `${volPercentage}%` }}></div>
-                          </div>
+                      <td style={{ borderLeft: '1px solid var(--border-color)', minWidth: '150px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span className="font-mono text-[0.85rem] font-medium text-gray-300">
+                            {(note.v && note.v > 0) ? (
+                              note.v >= 1000000 
+                                ? `${(note.v / 1000000).toFixed(2)}M` 
+                                : note.v >= 1000 
+                                  ? `${(note.v / 1000).toFixed(1)}K` 
+                                  : note.v.toLocaleString('es-AR')
+                            ) : '-'}
+                          </span>
+                        </div>
+                        <div className="bar-container">
+                          <div className="bar-fill" style={{ width: `${volPercentage}%` }}></div>
                         </div>
                       </td>
 
@@ -198,7 +206,7 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                       </td>
 
                       {/* Ticket Promedio */}
-                      <td style={{ textAlign: 'right', fontWeight: 500, color: 'rgba(255,255,255,0.8)' }}>
+                      <td className="font-mono text-dim" style={{ textAlign: 'right' }}>
                         {(note as any).avgTicket > 0 ? (note as any).avgTicket.toLocaleString('es-AR', { maximumFractionDigits: 0 }) : '-'}
                       </td>
                     </tr>
