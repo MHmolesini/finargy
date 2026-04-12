@@ -1,6 +1,17 @@
 import type { Metadata } from "next";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+});
 
 export const metadata: Metadata = {
   title: "FinArg Dashboard | Cotizaciones en Tiempo Real",
@@ -14,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body>
+      <body className={`${inter.variable} ${outfit.variable}`}>
         <div className="dashboard-container">
           <Sidebar />
           <main className="main-content">
