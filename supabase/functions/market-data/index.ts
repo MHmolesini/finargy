@@ -18,23 +18,40 @@ serve(async (req) => {
     const type = url.searchParams.get('type') || 'stocks'
 
     // Configuración de Supabase
-    // Usamos el cliente sin pasar el header de autorizacion si no viene, para evitar errores
+    // Usamos SERVICE_ROLE_KEY para poder escribir en las tablas de cache (saltando RLS)
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
     let apiUrl = ''
-    switch (type) {
-      case 'notes': apiUrl = 'https://data912.com/live/arg_notes'; break;
-      case 'bonds': apiUrl = 'https://data912.com/live/arg_bonds'; break;
-      case 'cedears': apiUrl = 'https://data912.com/live/arg_cedears'; break;
-      default: apiUrl = 'https://data912.com/live/arg_stocks'; break;
-    }
+    if (type === 'notes') apiUrl = 'https://data912.com/live/arg_notes'
+    else if (type === 'bonds') apiUrl = 'https://data912.com/live/arg_bonds'
+    else if (type === 'cedears') apiUrl = 'https://data912.com/live/arg_cedears'
+    else apiUrl = 'https://data912.com/live/stocks_bue'
 
-    // 1. Fetch de datos en vivo
     const response = await fetch(apiUrl)
     const liveData = await response.json()
+
+    // --- LÓGICA DE CACHE PARA LETRAS ---
+    if (type === 'notes' && Array.isArray(liveData)) {
+      try {
+        const toUpsert = liveData.map(item => ({
+          symbol: item.symbol,
+          data: item,
+          updated_at: new Date().toISOString()
+        }))
+
+        // Upsert masivo en la tabla de cache
+        const { error: upsertError } = await supabaseClient
+          .from('live_letras')
+          .upsert(toUpsert, { onConflict: 'symbol' })
+        
+        if (upsertError) console.error('Error actualizando cache de letras:', upsertError)
+      } catch (e) {
+        console.error('Error procesando cache:', e)
+      }
+    }
 
     // 2. Fetch de metadatos desde Postgres
     const { data: metadataList, error } = await supabaseClient
