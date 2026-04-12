@@ -24,32 +24,62 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    let apiUrl = ''
-    if (type === 'notes') apiUrl = 'https://data912.com/live/arg_notes'
-    else if (type === 'bonds') apiUrl = 'https://data912.com/live/arg_bonds'
-    else if (type === 'cedears') apiUrl = 'https://data912.com/live/arg_cedears'
-    else apiUrl = 'https://data912.com/live/stocks_bue'
+    let liveData: any[] = []
 
-    const response = await fetch(apiUrl)
-    const liveData = await response.json()
+    // --- CONFIGURACIÓN DE CACHE ESCALABLE ---
+    const cacheConfigs: Record<string, { table: string, url: string }> = {
+      'notes': { table: 'live_letras', url: 'https://data912.com/live/arg_notes' },
+      'bonds': { table: 'live_bonos', url: 'https://data912.com/live/arg_bonds' },
+      // Cedears y Stocks se pueden activar creando sus tablas en el futuro:
+      // 'cedears': { table: 'live_cedears', url: 'https://data912.com/live/arg_cedears' },
+      // 'stocks': { table: 'live_stocks', url: 'https://data912.com/live/stocks_bue' }
+    }
 
-    // --- LÓGICA DE CACHE PARA LETRAS ---
-    if (type === 'notes' && Array.isArray(liveData)) {
+    const config = cacheConfigs[type]
+
+    // --- 1. INTENTO DE LEER DESDE CACHE (TTL 30s) ---
+    if (config) {
       try {
-        const toUpsert = liveData.map(item => ({
-          symbol: item.symbol,
-          data: item,
-          updated_at: new Date().toISOString()
-        }))
+        const { data: latest } = await supabaseClient
+          .from(config.table)
+          .select('updated_at')
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
 
-        // Upsert masivo en la tabla de cache
-        const { error: upsertError } = await supabaseClient
-          .from('live_letras')
-          .upsert(toUpsert, { onConflict: 'symbol' })
-        
-        if (upsertError) console.error('Error actualizando cache de letras:', upsertError)
-      } catch (e) {
-        console.error('Error procesando cache:', e)
+        if (latest && (new Date().getTime() - new Date(latest.updated_at).getTime() < 30000)) {
+          const { data: cached } = await supabaseClient.from(config.table).select('data')
+          if (cached && cached.length > 0) {
+            console.log(`[Cache Hit] ${type} desde ${config.table}`)
+            liveData = cached.map(item => item.data)
+          }
+        }
+      } catch (err) {
+        console.error(`Error en cache de ${type}:`, err)
+      }
+    }
+
+    // --- 2. SI NO HAY CACHE, HACEMOS FETCH Y ACTUALIZAMOS DB ---
+    if (liveData.length === 0) {
+      const apiUrl = config?.url || (type === 'cedears' ? 'https://data912.com/live/arg_cedears' : 'https://data912.com/live/stocks_bue')
+      
+      console.log(`[Fetch Directo] Solicitando ${type} desde ${apiUrl}`)
+      const response = await fetch(apiUrl)
+      liveData = await response.json()
+
+      if (config && Array.isArray(liveData)) {
+        try {
+          const toUpsert = liveData.map(item => ({
+            symbol: item.symbol,
+            data: item,
+            updated_at: new Date().toISOString()
+          }))
+
+          await supabaseClient.from(config.table).upsert(toUpsert, { onConflict: 'symbol' })
+          console.log(`[Cache Update] ${toUpsert.length} registros en ${config.table}`)
+        } catch (upsertErr) {
+          console.error(`Error actualizando ${config.table}:`, upsertErr)
+        }
       }
     }
 
