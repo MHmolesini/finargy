@@ -38,16 +38,21 @@ const getSectorHexColor = (sector: string) => {
 
 interface ScatterProps {
   stocks: Stock[];
+  volumeMode?: 'nominal' | 'monto';
 }
 
-const StocksScatter: React.FC<ScatterProps> = ({ stocks }) => {
+const StocksScatter: React.FC<ScatterProps> = ({ stocks, volumeMode = 'nominal' }) => {
   const chartOptions = useMemo(() => {
 
     // Solo operamos con ARS y evitamos outliers nulos
     const validStocks = stocks.filter(s => s.moneda === 'ARS' && s.q_op !== undefined && s.pct_change !== undefined);
 
-    // Buscamos el volumen nominal máximo para normalizar el radio (Z-axis) de las burbujas
-    const maxVol = Math.max(...validStocks.map(s => s.v || 0), 1);
+    // Buscamos el volumen nominal/monto máximo para normalizar el radio (Z-axis) de las burbujas
+    let maxVol = 1;
+    validStocks.forEach(s => {
+      const vol = volumeMode === 'monto' ? ((s.v || 0) * (s.c || 0)) : (s.v || 0);
+      if (vol > maxVol) maxVol = vol;
+    });
 
     // ECharts necesita Series agrupadas si queremos tener Leyenda interactiva por Sector.
     const seriesBySector: Record<string, any[]> = {};
@@ -62,7 +67,7 @@ const StocksScatter: React.FC<ScatterProps> = ({ stocks }) => {
       seriesBySector[sector].push([
         stock.pct_change || 0,
         stock.q_op || 0,
-        stock.v || 0,
+        volumeMode === 'monto' ? ((stock.v || 0) * (stock.c || 0)) : (stock.v || 0),
         stock.symbol,
         sector
       ]);
@@ -139,7 +144,7 @@ const StocksScatter: React.FC<ScatterProps> = ({ stocks }) => {
           const change = value[0] > 0 ? `+${value[0]}%` : `${value[0]}%`;
           const changeColor = value[0] > 0 ? '#10b981' : (value[0] < 0 ? '#ef4444' : '#a0a0a0');
           const ops = value[1].toLocaleString('es-AR');
-          const vol = value[2].toLocaleString('es-AR');
+          const vol = value[2].toLocaleString('es-AR', { minimumFractionDigits: volumeMode === 'monto' ? 2 : 0, maximumFractionDigits: volumeMode === 'monto' ? 2 : 0 });
           const symbolType = value[3];
           const sector = value[4];
 
@@ -158,8 +163,8 @@ const StocksScatter: React.FC<ScatterProps> = ({ stocks }) => {
                 <strong style="color: #fff">${ops}</strong>
               </div>
               <div style="display: flex; justify-content: space-between; gap: 20px;">
-                <span>Volumen Nómina (Z):</span>
-                <strong style="color: #fff">${vol}</strong>
+                <span>Volumen ${volumeMode === 'monto' ? '$' : ' Nom.'} (Z):</span>
+                <strong style="color: #fff">${volumeMode === 'monto' ? '$ ' : ''}${vol}</strong>
               </div>
             </div>
           `;
@@ -218,7 +223,7 @@ const StocksScatter: React.FC<ScatterProps> = ({ stocks }) => {
           Dispersión Analítica: Riesgo vs Liquidez (ARS)
         </h3>
         <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-          Eje Y (Operaciones), Eje X (Var. %), Radio (Vol. Nominales)
+          Eje Y (Operaciones), Eje X (Var. %), Radio (Vol. {volumeMode === 'monto' ? 'Monto $' : 'Nominal'})
         </div>
       </div>
 

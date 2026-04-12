@@ -12,10 +12,13 @@ const StocksDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [volumeMode, setVolumeMode] = useState<'nominal' | 'monto'>('monto');
 
   // Estados del Menú Sticky Multiselect
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isIndustryFilterOpen, setIsIndustryFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
   // Cerrar menú al tocar fuera
@@ -23,6 +26,7 @@ const StocksDashboard = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
         setIsFilterOpen(false);
+        setIsIndustryFilterOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -89,15 +93,39 @@ const StocksDashboard = () => {
     return Object.entries(counts).sort((a,b) => b[1] - a[1]); // Ordenados por caudal de acciones
   }, [data]);
 
-  // Algoritmo Analítico 2: Filtrado Global Dinámico
-  const filteredData = useMemo(() => {
-    if (selectedSectors.length === 0) return data;
-    return data.filter(stock => selectedSectors.includes(stock.sector || 'General'));
+  // Algoritmo Analítico 1B: Sumatoria de Industrias en Cascada
+  const industryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const baseData = selectedSectors.length > 0 ? data.filter(d => selectedSectors.includes(d.sector || 'General')) : data;
+    baseData.forEach(stock => {
+      if (!stock.v || stock.v <= 0) return;
+      const ind = stock.industria || 'General';
+      counts[ind] = (counts[ind] || 0) + 1;
+    });
+    return Object.entries(counts).sort((a,b) => b[1] - a[1]);
   }, [data, selectedSectors]);
+
+  // Algoritmo Analítico 2: Filtrado Global Dinámico Combinado
+  const filteredData = useMemo(() => {
+    let result = data;
+    if (selectedSectors.length > 0) {
+      result = result.filter(stock => selectedSectors.includes(stock.sector || 'General'));
+    }
+    if (selectedIndustries.length > 0) {
+      result = result.filter(stock => selectedIndustries.includes(stock.industria || 'General'));
+    }
+    return result;
+  }, [data, selectedSectors, selectedIndustries]);
 
   const toggleSector = (sector: string) => {
     setSelectedSectors(prev => 
       prev.includes(sector) ? prev.filter(s => s !== sector) : [...prev, sector]
+    );
+  };
+
+  const toggleIndustry = (ind: string) => {
+    setSelectedIndustries(prev => 
+      prev.includes(ind) ? prev.filter(s => s !== ind) : [...prev, ind]
     );
   };
 
@@ -120,6 +148,9 @@ const StocksDashboard = () => {
 
   return (
     <div className="flex flex-col gap-6">
+      <style>{`
+        .hide-scroll::-webkit-scrollbar { display: none !important; }
+      `}</style>
       {/* HEADER SECTION */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '0.5rem' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white', fontFamily: 'Outfit, sans-serif' }}>
@@ -137,72 +168,167 @@ const StocksDashboard = () => {
         backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', 
         backgroundColor: 'rgba(10,10,10,0.85)', marginBottom: '1rem' 
       }}>
-         <div style={{ position: 'relative' }} ref={filterRef}>
-           <button 
-             onClick={() => setIsFilterOpen(!isFilterOpen)} 
-             style={{
-               display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
-               backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '8px',
-               color: '#e2e8f0', fontSize: '0.85rem', fontWeight: 500,
-               border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'all 0.2s'
-             }}
-             onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'}
-             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
-           >
-             <Filter size={16} color="#34d399" />
-             Filtro Sectorial 
-             {selectedSectors.length > 0 && <span style={{ backgroundColor: 'rgba(16,185,129,0.2)', color: '#34d399', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem' }}>{selectedSectors.length}</span>}
-             <ChevronDown size={16} color="#94a3b8" style={{ transform: isFilterOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
-           </button>
-           
-           {isFilterOpen && (
-             <div style={{
-               position: 'absolute', top: '100%', left: 0, marginTop: '8px', width: '340px',
-               backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)',
-               borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.7)',
-               padding: '8px 0', zIndex: 100, maxHeight: '50vh', overflowY: 'auto'
-             }}>
-                <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: '-8px', backgroundColor: '#0f172a', zIndex: 10 }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Limitar por Sector</span>
-                  {selectedSectors.length > 0 && (
-                    <button style={{ fontSize: '0.75rem', color: '#ef4444', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 500 }} onClick={() => setSelectedSectors([])}>Limpiar Filtros</button>
-                  )}
-                </div>
-                <div style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  {sectorCounts.map(([sector, count]) => (
-                    <button 
-                      key={sector}
-                      onClick={() => toggleSector(sector)}
-                      style={{
-                        width: '100%', textAlign: 'left', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        backgroundColor: selectedSectors.includes(sector) ? 'rgba(255,255,255,0.1)' : 'transparent', borderRadius: '6px',
-                        border: 'none', cursor: 'pointer', transition: 'background-color 0.2s'
-                      }}
-                      onMouseOver={(e) => { if (!selectedSectors.includes(sector)) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)' }}
-                      onMouseOut={(e) => { if (!selectedSectors.includes(sector)) e.currentTarget.style.backgroundColor = 'transparent' }}
-                    >
-                      <span style={{ color: selectedSectors.includes(sector) ? '#fff' : '#cbd5e1', fontWeight: selectedSectors.includes(sector) ? 600 : 400, fontSize: '0.85rem' }}>
-                        {sector}
-                      </span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '0.7rem', color: '#94a3b8', backgroundColor: 'rgba(0,0,0,0.4)', padding: '2px 8px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>{count}</span>
-                        <div style={{
-                          width: '18px', height: '18px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          backgroundColor: selectedSectors.includes(sector) ? '#10b981' : 'transparent',
-                          border: selectedSectors.includes(sector) ? 'none' : '1px solid rgba(255,255,255,0.3)',
-                          boxShadow: selectedSectors.includes(sector) ? '0 0 10px rgba(16,185,129,0.4)' : 'none'
-                        }}>
-                          {selectedSectors.includes(sector) && <Check size={12} color="#fff" strokeWidth={3} />}
+         <div style={{ display: 'flex', gap: '12px' }} ref={filterRef}>
+           {/* BOTÓN SECTORES */}
+           <div style={{ position: 'relative' }}>
+             <button 
+               onClick={() => { setIsFilterOpen(!isFilterOpen); setIsIndustryFilterOpen(false); }} 
+               style={{
+                 display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
+                 backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '8px',
+                 color: '#e2e8f0', fontSize: '0.85rem', fontWeight: 500,
+                 border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'all 0.2s'
+               }}
+               onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'}
+               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
+             >
+               <Filter size={16} color="#3b82f6" />
+               Sector 
+               {selectedSectors.length > 0 && <span style={{ backgroundColor: 'rgba(59,130,246,0.2)', color: '#3b82f6', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem' }}>{selectedSectors.length}</span>}
+               <ChevronDown size={16} color="#94a3b8" style={{ transform: isFilterOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+             </button>
+             
+             {isFilterOpen && (
+               <div className="hide-scroll" style={{
+                 position: 'absolute', top: '100%', left: 0, marginTop: '8px', width: '340px',
+                 backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)',
+                 borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.7)', padding: '8px 0', zIndex: 100, 
+                 maxHeight: '380px', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none'
+               }}>
+                  <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: '-8px', backgroundColor: '#0f172a', zIndex: 10 }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Limitar por Sector</span>
+                    {selectedSectors.length > 0 && (
+                      <button style={{ fontSize: '0.75rem', color: '#ef4444', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 500 }} onClick={() => setSelectedSectors([])}>Limpiar</button>
+                    )}
+                  </div>
+                  <div style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {sectorCounts.map(([sector, count]) => (
+                      <button 
+                        key={sector}
+                        onClick={() => toggleSector(sector)}
+                        style={{
+                          width: '100%', textAlign: 'left', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          backgroundColor: selectedSectors.includes(sector) ? 'rgba(59,130,246,0.15)' : 'transparent', borderRadius: '6px',
+                          border: 'none', cursor: 'pointer', transition: 'background-color 0.2s'
+                        }}
+                        onMouseOver={(e) => { if (!selectedSectors.includes(sector)) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)' }}
+                        onMouseOut={(e) => { if (!selectedSectors.includes(sector)) e.currentTarget.style.backgroundColor = 'transparent' }}
+                      >
+                        <span style={{ color: selectedSectors.includes(sector) ? '#fff' : '#cbd5e1', fontWeight: selectedSectors.includes(sector) ? 600 : 400, fontSize: '0.85rem' }}>
+                          {sector}
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span style={{ fontSize: '0.7rem', color: '#94a3b8', backgroundColor: 'rgba(0,0,0,0.4)', padding: '2px 8px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>{count}</span>
+                          <div style={{
+                            width: '18px', height: '18px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            backgroundColor: selectedSectors.includes(sector) ? '#3b82f6' : 'transparent',
+                            border: selectedSectors.includes(sector) ? 'none' : '1px solid rgba(255,255,255,0.3)',
+                            boxShadow: selectedSectors.includes(sector) ? '0 0 10px rgba(59,130,246,0.4)' : 'none'
+                          }}>
+                            {selectedSectors.includes(sector) && <Check size={12} color="#fff" strokeWidth={3} />}
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-             </div>
-           )}
+                      </button>
+                    ))}
+                  </div>
+               </div>
+             )}
+           </div>
+
+           {/* BOTÓN INDUSTRIAS */}
+           <div style={{ position: 'relative' }}>
+             <button 
+               onClick={() => { setIsIndustryFilterOpen(!isIndustryFilterOpen); setIsFilterOpen(false); }} 
+               style={{
+                 display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
+                 backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '8px',
+                 color: '#e2e8f0', fontSize: '0.85rem', fontWeight: 500,
+                 border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'all 0.2s'
+               }}
+               onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'}
+               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
+             >
+               <Filter size={16} color="#10b981" />
+               Industria
+               {selectedIndustries.length > 0 && <span style={{ backgroundColor: 'rgba(16,185,129,0.2)', color: '#10b981', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem' }}>{selectedIndustries.length}</span>}
+               <ChevronDown size={16} color="#94a3b8" style={{ transform: isIndustryFilterOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+             </button>
+             
+             {isIndustryFilterOpen && (
+               <div className="hide-scroll" style={{
+                 position: 'absolute', top: '100%', left: 0, marginTop: '8px', width: '380px',
+                 backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)',
+                 borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.7)', padding: '8px 0', zIndex: 100, 
+                 maxHeight: '380px', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none'
+               }}>
+                  <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: '-8px', backgroundColor: '#0f172a', zIndex: 10 }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Limitar por Industria</span>
+                    {selectedIndustries.length > 0 && (
+                      <button style={{ fontSize: '0.75rem', color: '#ef4444', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 500 }} onClick={() => setSelectedIndustries([])}>Limpiar</button>
+                    )}
+                  </div>
+                  <div style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {industryCounts.map(([ind, count]) => (
+                      <button 
+                        key={ind}
+                        onClick={() => toggleIndustry(ind)}
+                        style={{
+                          width: '100%', textAlign: 'left', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          backgroundColor: selectedIndustries.includes(ind) ? 'rgba(16,185,129,0.15)' : 'transparent', borderRadius: '6px',
+                          border: 'none', cursor: 'pointer', transition: 'background-color 0.2s'
+                        }}
+                        onMouseOver={(e) => { if (!selectedIndustries.includes(ind)) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)' }}
+                        onMouseOut={(e) => { if (!selectedIndustries.includes(ind)) e.currentTarget.style.backgroundColor = 'transparent' }}
+                      >
+                        <span style={{ color: selectedIndustries.includes(ind) ? '#fff' : '#cbd5e1', fontWeight: selectedIndustries.includes(ind) ? 600 : 400, fontSize: '0.85rem' }}>
+                          {ind}
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span style={{ fontSize: '0.7rem', color: '#94a3b8', backgroundColor: 'rgba(0,0,0,0.4)', padding: '2px 8px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>{count}</span>
+                          <div style={{
+                            width: '18px', height: '18px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            backgroundColor: selectedIndustries.includes(ind) ? '#10b981' : 'transparent',
+                            border: selectedIndustries.includes(ind) ? 'none' : '1px solid rgba(255,255,255,0.3)',
+                            boxShadow: selectedIndustries.includes(ind) ? '0 0 10px rgba(16,185,129,0.4)' : 'none'
+                          }}>
+                            {selectedIndustries.includes(ind) && <Check size={12} color="#fff" strokeWidth={3} />}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+               </div>
+             )}
+           </div>
          </div>
          
          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+             {/* VOLUME MODE TOGGLE */}
+             <div style={{ display: 'flex', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '8px', padding: '4px', border: '1px solid rgba(255,255,255,0.05)' }}>
+               <button 
+                 onClick={() => setVolumeMode('nominal')}
+                 style={{
+                   padding: '4px 12px', fontSize: '0.75rem', fontWeight: 600, borderRadius: '6px', border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+                   backgroundColor: volumeMode === 'nominal' ? 'rgba(59,130,246,0.2)' : 'transparent',
+                   color: volumeMode === 'nominal' ? '#60a5fa' : '#64748b'
+                 }}
+                 title="Ponderar Gráficos por Cantidad de Títulos"
+               >
+                 Nominal
+               </button>
+               <button 
+                 onClick={() => setVolumeMode('monto')}
+                 style={{
+                   padding: '4px 12px', fontSize: '0.75rem', fontWeight: 600, borderRadius: '6px', border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+                   backgroundColor: volumeMode === 'monto' ? 'rgba(16,185,129,0.2)' : 'transparent',
+                   color: volumeMode === 'monto' ? '#34d399' : '#64748b'
+                 }}
+                 title="Ponderar Gráficos por Monto Operado en $"
+               >
+                 Monto $
+               </button>
+             </div>
+
              <button
                 onClick={() => { if (!isSyncing) fetchStocks() }}
                 disabled={loading}
@@ -222,15 +348,15 @@ const StocksDashboard = () => {
       {/* RENTA VARIABLE VISUALIZATIONS */}
       <div className="dashboard-content grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Gráfico Sunburst Analítico de Ecosistemas */}
-        <StocksSunburst stocks={filteredData} />
+        <StocksSunburst stocks={filteredData} volumeMode={volumeMode} />
 
         {/* Gráfico Treemap Térmico */}
-        <StocksHeatmap stocks={filteredData} />
+        <StocksHeatmap stocks={filteredData} volumeMode={volumeMode} />
       </div>
 
       <div className="dashboard-content w-full">
         {/* Gráfico Dispersión */}
-        <StocksScatter stocks={filteredData} />
+        <StocksScatter stocks={filteredData} volumeMode={volumeMode} />
       </div>
 
       <div className="dashboard-content">

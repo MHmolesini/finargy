@@ -20,6 +20,7 @@ export interface Stock {
 export interface ProcessedStock extends Stock {
   spread: number;
   avgTicket: number;
+  vol_monto: number;
 }
 
 type SortConfig = {
@@ -39,7 +40,8 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
     return stocks.map(stock => {
       const spread = (stock.px_ask && stock.px_bid && stock.px_ask > 0) ? ((stock.px_ask - stock.px_bid) / stock.px_ask) * 100 : 0;
       const avgTicket = (stock.v && stock.q_op && stock.q_op > 0) ? stock.v / stock.q_op : 0;
-      return { ...stock, spread, avgTicket };
+      const vol_monto = (stock.v || 0) * (stock.c || 0);
+      return { ...stock, spread, avgTicket, vol_monto };
     });
   }, [stocks]);
 
@@ -60,11 +62,12 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
   }, [enrichedStocks, sortConfig]);
 
   // Máximos para barras
-  const { maxVolume, maxOps } = useMemo(() => {
-    if (stocks.length === 0) return { maxVolume: 1, maxOps: 1 };
+  const { maxVolume, maxOps, maxVolMonto } = useMemo(() => {
+    if (stocks.length === 0) return { maxVolume: 1, maxOps: 1, maxVolMonto: 1 };
     return {
       maxVolume: Math.max(...stocks.map(n => n.v || 0), 1),
       maxOps: Math.max(...stocks.map(n => n.q_op || 0), 1),
+      maxVolMonto: Math.max(...stocks.map(n => (n.v || 0) * (n.c || 0)), 1),
     };
   }, [stocks]);
 
@@ -145,6 +148,9 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
               <th style={{ borderLeft: '1px solid var(--border-color)' }} onClick={() => requestSort('v')}>
                 Volumen {getSortIcon('v')}
               </th>
+              <th onClick={() => requestSort('vol_monto')}>
+                Volumen $ {getSortIcon('vol_monto')}
+              </th>
               <th onClick={() => requestSort('q_op')}>Ops {getSortIcon('q_op')}</th>
               <th style={{ textAlign: 'right' }} onClick={() => requestSort('avgTicket')}>
                 Ticket Prom. {getSortIcon('avgTicket')}
@@ -159,12 +165,12 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
               <th style={{ padding: '0.5rem 1.5rem', borderRight: '1px solid var(--border-color)' }} onClick={() => requestSort('px_bid')}>Prc. {getSortIcon('px_bid')}</th>
               <th style={{ padding: '0.5rem 1.5rem' }} onClick={() => requestSort('px_ask')}>Prc. {getSortIcon('px_ask')}</th>
               <th style={{ padding: '0.5rem 1.5rem' }} onClick={() => requestSort('q_ask')}>Cant. {getSortIcon('q_ask')}</th>
-              <th colSpan={4} style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default' }}></th>
+              <th colSpan={5} style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default' }}></th>
             </tr>
           </thead>
           <tbody>
             <tr style={{ background: 'rgba(255,255,255,0.03)', cursor: 'default' }}>
-              <td colSpan={11} style={{ 
+              <td colSpan={14} style={{ 
                 padding: '0.5rem 1.5rem', 
                 fontSize: '0.8rem', 
                 fontWeight: 'bold', 
@@ -270,6 +276,18 @@ const StocksTable: React.FC<StocksTableProps> = ({ stocks }) => {
                     </div>
                     <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', height: '4px', overflow: 'hidden' }}>
                       <div style={{ width: `${volPercentage}%`, backgroundColor: 'var(--accent-color)', height: '100%', borderRadius: '2px', transition: 'width 0.3s ease' }}></div>
+                    </div>
+                  </td>
+
+                  {/* Volumen $ */}
+                  <td style={{ minWidth: '170px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <span className="font-mono text-[0.85rem] font-medium text-emerald-400">
+                        $ {stock.vol_monto?.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+                      </span>
+                    </div>
+                    <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', height: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${(stock.vol_monto / maxVolMonto) * 100}%`, backgroundColor: '#34d399', height: '100%', borderRadius: '2px', transition: 'width 0.3s ease' }}></div>
                     </div>
                   </td>
 

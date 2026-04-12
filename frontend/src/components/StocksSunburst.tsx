@@ -46,11 +46,12 @@ const getSectorHexColor = (sector: string) => {
   }
 };
 
-interface SunburstProps {
+interface StocksSunburstProps {
   stocks: Stock[];
+  volumeMode?: 'nominal' | 'monto';
 }
 
-const StocksSunburst: React.FC<SunburstProps> = ({ stocks }) => {
+const StocksSunburst: React.FC<StocksSunburstProps> = ({ stocks, volumeMode = 'nominal' }) => {
   const chartOptions = useMemo(() => {
     // 1. Agrupamiento Jerárquico
     const sectorMap: Record<string, any> = {};
@@ -63,13 +64,14 @@ const StocksSunburst: React.FC<SunburstProps> = ({ stocks }) => {
       const sector = stock.sector || 'General';
       const industria = stock.industria || 'General';
       const symbol = stock.symbol;
+      const volume = volumeMode === 'monto' ? ((stock.v || 0) * (stock.c || 0)) : (stock.v || 0);
 
       if (!sectorMap[sector]) sectorMap[sector] = { industries: {} };
       if (!sectorMap[sector].industries[industria]) sectorMap[sector].industries[industria] = [];
       
       sectorMap[sector].industries[industria].push({
         name: symbol,
-        value: stock.v,
+        value: volume,
       });
     });
 

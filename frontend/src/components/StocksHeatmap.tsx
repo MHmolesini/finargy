@@ -4,9 +4,10 @@ import { Stock } from './StocksTable';
 
 interface HeatmapProps {
   stocks: Stock[];
+  volumeMode?: 'nominal' | 'monto';
 }
 
-const StocksHeatmap: React.FC<HeatmapProps> = ({ stocks }) => {
+const StocksHeatmap: React.FC<HeatmapProps> = ({ stocks, volumeMode = 'nominal' }) => {
   const chartOptions = useMemo(() => {
     
     // Interpolación básica de rojos y verdes térmicos tipo TradingView
@@ -34,13 +35,14 @@ const StocksHeatmap: React.FC<HeatmapProps> = ({ stocks }) => {
 
       const sector = stock.sector || 'General';
       const symbol = stock.symbol;
+      const volume = volumeMode === 'monto' ? ((stock.v || 0) * (stock.c || 0)) : (stock.v || 0);
 
       if (!sectorMap[sector]) sectorMap[sector] = [];
       
       // Métrica de cambio para ese símbolo inyectada en el nodo
       sectorMap[sector].push({
         name: symbol,
-        value: stock.v,
+        value: volume,
         itemStyle: {
           color: getColorForChange(stock.pct_change)
         },
@@ -68,7 +70,7 @@ const StocksHeatmap: React.FC<HeatmapProps> = ({ stocks }) => {
              return `
               <div style="font-family: monospace; font-size: 13px;">
                 <strong style="color: var(--accent-color); font-size: 14px;">${NodeData.name}</strong><br/>
-                Volumen: ${valueStr}<br/>
+                Volumen: ${volumeMode === 'monto' ? '$' : ''}${valueStr}<br/>
                 Variación: <span style="color: ${color}; font-weight: bold;">${changeTxt}</span>
               </div>`;
           }
