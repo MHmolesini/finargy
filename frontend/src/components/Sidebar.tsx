@@ -9,10 +9,10 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: 'Dashboard', path: '/', icon: '📊' },
-    { name: 'Bonos (Ar)', path: '/notes', icon: '📝' },
+    // { name: 'Bonos (Ar)', path: '/notes', icon: '📝' },
     { name: 'Acciones', path: '/stocks', icon: '📈' },
     { name: 'CEDEARs', path: '/cedears', icon: '🌍' },
-    { name: 'Configuración', path: '/settings', icon: '⚙️' },
+    // { name: 'Configuración', path: '/settings', icon: '⚙️' },
   ];
 
   return (
