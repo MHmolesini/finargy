@@ -225,6 +225,7 @@ const StocksScatter: React.FC<ScatterProps> = ({ stocks }) => {
       <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
         <div style={{ height: '850px', width: '1000px', maxWidth: '100%', aspectRatio: '1/1' }}>
           <ReactECharts
+            notMerge={true}
             option={chartOptions}
             style={{ height: '100%', width: '100%' }}
             opts={{ renderer: 'canvas' }}
