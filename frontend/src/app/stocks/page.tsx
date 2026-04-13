@@ -2,7 +2,7 @@ import StocksDashboard from "@/components/StocksDashboard";
 
 export default function StocksPage() {
   return (
-    <div style={{ padding: '0 1rem' }}>
+    <div>
       <header className="header">
         <div>
           <h1 className="font-outfit" style={{ fontSize: '1.75rem', fontWeight: 700, color: 'white', letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>

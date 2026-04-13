@@ -4,23 +4,49 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const Sidebar = () => {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
 
   const menuItems = [
     { name: 'Dashboard', path: '/', icon: '📊' },
-    // { name: 'Bonos (Ar)', path: '/notes', icon: '📝' },
     { name: 'Acciones', path: '/stocks', icon: '📈' },
     { name: 'CEDEARs', path: '/cedears', icon: '🌍' },
-    // { name: 'Configuración', path: '/settings', icon: '⚙️' },
   ];
 
+  const handleLinkClick = () => {
+    if (window.innerWidth <= 1024 && onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <aside className="sidebar">
-      <div style={{ marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
         <h1 className="font-outfit" style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
           FinArg <span style={{ color: 'var(--accent-color)' }}>.</span>
         </h1>
+
+        {onClose && (
+          <button 
+            onClick={onClose}
+            className="mobile-only"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text-dim)',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              display: window.innerWidth <= 1024 ? 'block' : 'none'
+            }}
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -30,6 +56,7 @@ const Sidebar = () => {
             <Link 
               key={item.path} 
               href={item.path}
+              onClick={handleLinkClick}
               style={{
                 display: 'flex',
                 alignItems: 'center',

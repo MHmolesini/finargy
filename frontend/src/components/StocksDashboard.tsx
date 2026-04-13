@@ -234,11 +234,12 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
       {/* STICKY FILTER COMMMAND CENTER */}
       <div className="sticky-col" style={{ 
         position: 'sticky', top: 0, zIndex: 50, padding: '12px', borderRadius: '12px', 
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
         backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', 
         backgroundColor: 'rgba(10,10,10,0.85)', marginBottom: '1rem' 
       }}>
-         <div style={{ display: 'flex', gap: '12px' }} ref={filterRef}>
+         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', flex: '1 1 auto' }} ref={filterRef}>
            {/* BOTÓN SECTORES */}
            <div style={{ position: 'relative' }}>
              <button 
@@ -422,9 +423,8 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
              borderRadius: '20px', 
              padding: '6px 14px',
              border: '1px solid rgba(255,255,255,0.1)',
-             minWidth: '220px',
-             flex: '0 1 300px',
-             marginLeft: '16px',
+             minWidth: '150px',
+             flex: '1 1 220px',
              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
              boxShadow: searchTerm ? '0 0 15px rgba(59,130,246,0.15)' : 'none'
            }}>

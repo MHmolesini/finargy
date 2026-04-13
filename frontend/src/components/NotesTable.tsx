@@ -69,44 +69,49 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
 
   return (
     <div className="premium-table-container animate-fade-in">
-      <div style={{ overflowX: 'auto', position: 'relative' }}>
+      <div className="custom-scrollbar" style={{ 
+        overflowX: 'auto', 
+        overflowY: 'auto', 
+        maxHeight: '75vh', 
+        position: 'relative'
+      }}>
         <table className="premium-table">
-          <thead>
-            <tr>
-              <th className="sticky-col" onClick={() => requestSort('symbol')}>Símbolo {getSortIcon('symbol')}</th>
-              <th onClick={() => requestSort('c')}>Último {getSortIcon('c')}</th>
-              <th onClick={() => requestSort('pct_change')}>Variación {getSortIcon('pct_change')}</th>
-              <th colSpan={2} style={{ textAlign: 'center', borderRight: '1px solid var(--border-color)', cursor: 'default' }}>Compra (Bid)</th>
-              <th colSpan={2} style={{ textAlign: 'center', cursor: 'default' }}>Venta (Ask)</th>
-              <th style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)' }} onClick={() => requestSort('spread')}>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 30 }}>
+            <tr style={{ position: 'sticky', top: 0, zIndex: 31 }}>
+              <th className="sticky-col" onClick={() => requestSort('symbol')} style={{ position: 'sticky', top: 0, left: 0, backgroundColor: '#0a0a0a', zIndex: 40 }}>Símbolo {getSortIcon('symbol')}</th>
+              <th onClick={() => requestSort('c')} style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Último {getSortIcon('c')}</th>
+              <th onClick={() => requestSort('pct_change')} style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Variación {getSortIcon('pct_change')}</th>
+              <th colSpan={2} style={{ textAlign: 'center', borderRight: '1px solid var(--border-color)', cursor: 'default', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Compra (Bid)</th>
+              <th colSpan={2} style={{ textAlign: 'center', cursor: 'default', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }}>Venta (Ask)</th>
+              <th style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('spread')}>
                 Spread % {getSortIcon('spread')}
               </th>
-              <th onClick={() => requestSort('daysToVto')}>Días Vto. {getSortIcon('daysToVto')}</th>
-              <th onClick={() => requestSort('precio_final_estimado')}>Monto Vto <br/>(T-1) {getSortIcon('precio_final_estimado')}</th>
-              <th onClick={() => requestSort('tasaDirecta')}>Tasa<br/>Directa {getSortIcon('tasaDirecta')}</th>
-              <th onClick={() => requestSort('tem')}>TEM % {getSortIcon('tem')}</th>
-              <th onClick={() => requestSort('tea')}>TEA % {getSortIcon('tea')}</th>
-              <th style={{ borderLeft: '1px solid var(--border-color)' }} onClick={() => requestSort('v')}>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('daysToVto')}>Días Vto. {getSortIcon('daysToVto')}</th>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('precio_final_estimado')}>Monto Vto <br/>(T-1) {getSortIcon('precio_final_estimado')}</th>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('tasaDirecta')}>Tasa<br/>Directa {getSortIcon('tasaDirecta')}</th>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('tem')}>TEM % {getSortIcon('tem')}</th>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('tea')}>TEA % {getSortIcon('tea')}</th>
+              <th style={{ borderLeft: '1px solid var(--border-color)', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('v')}>
                 Volumen {getSortIcon('v')}
               </th>
-              <th onClick={() => requestSort('q_op')}>Ops {getSortIcon('q_op')}</th>
-              <th style={{ textAlign: 'right' }} onClick={() => requestSort('avgTicket')}>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('q_op')}>Ops {getSortIcon('q_op')}</th>
+              <th style={{ textAlign: 'right', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('avgTicket')}>
                 Ticket Prom. {getSortIcon('avgTicket')}
               </th>
             </tr>
-            <tr style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.01)', cursor: 'default' }}>
-              <th className="sticky-col" style={{ cursor: 'default' }}></th>
-              <th colSpan={2} style={{ cursor: 'default' }}></th>
-              <th style={{ padding: '0.5rem 1.5rem' }} onClick={() => requestSort('q_bid')}>Cant. {getSortIcon('q_bid')}</th>
-              <th style={{ padding: '0.5rem 1.5rem', borderRight: '1px solid var(--border-color)' }} onClick={() => requestSort('px_bid')}>Prc. {getSortIcon('px_bid')}</th>
-              <th style={{ padding: '0.5rem 1.5rem' }} onClick={() => requestSort('px_ask')}>Prc. {getSortIcon('px_ask')}</th>
-              <th style={{ padding: '0.5rem 1.5rem' }} onClick={() => requestSort('q_ask')}>Cant. {getSortIcon('q_ask')}</th>
-              <th style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default' }}></th>
-              <th style={{ cursor: 'default' }}></th>
-              <th style={{ cursor: 'default' }}></th>
-              <th style={{ cursor: 'default' }}></th>
-              <th colSpan={2} style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default' }}></th>
-              <th style={{ cursor: 'default' }}></th>
+            <tr style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.01)', cursor: 'default', position: 'sticky', top: '45px', zIndex: 31 }}>
+              <th className="sticky-col" style={{ cursor: 'default', position: 'sticky', top: '45px', left: 0, backgroundColor: '#0a0a0a', zIndex: 40 }}></th>
+              <th colSpan={2} style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th style={{ padding: '0.5rem 1.5rem', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('q_bid')}>Cant. {getSortIcon('q_bid')}</th>
+              <th style={{ padding: '0.5rem 1.5rem', borderRight: '1px solid var(--border-color)', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('px_bid')}>Prc. {getSortIcon('px_bid')}</th>
+              <th style={{ padding: '0.5rem 1.5rem', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('px_ask')}>Prc. {getSortIcon('px_ask')}</th>
+              <th style={{ padding: '0.5rem 1.5rem', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('q_ask')}>Cant. {getSortIcon('q_ask')}</th>
+              <th style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th colSpan={2} style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
             </tr>
           </thead>
           

@@ -13,6 +13,17 @@ interface StocksReturnsHeatmapProps {
 }
 
 const StocksReturnsHeatmap = ({ historicalData }: StocksReturnsHeatmapProps) => {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const data = useMemo(() => {
     if (!Array.isArray(historicalData) || historicalData.length === 0) return null;
 
@@ -169,14 +180,20 @@ const StocksReturnsHeatmap = ({ historicalData }: StocksReturnsHeatmapProps) => 
     grid: {
       top: '10px',
       bottom: '60px',
-      left: '90px',
+      left: isMobile ? '70px' : '90px',
       right: '10px',
       containLabel: true
     },
     xAxis: {
       type: 'category',
       data: data.months,
-      axisLabel: { color: '#94a3b8', fontSize: 10, margin: 12, rotate: 30 },
+      axisLabel: { 
+        color: '#94a3b8', 
+        fontSize: isMobile ? 8 : 10, 
+        margin: 12, 
+        rotate: 30,
+        interval: 0
+      },
       axisLine: { show: false },
       axisTick: { show: false }
     },
@@ -185,9 +202,9 @@ const StocksReturnsHeatmap = ({ historicalData }: StocksReturnsHeatmapProps) => 
       data: data.years,
       axisLabel: { 
         color: (val: string) => val === 'PROMEDIO' ? '#3b82f6' : '#f8fafc', 
-        fontSize: (val: string) => val === 'PROMEDIO' ? 14 : 12, 
+        fontSize: (val: string) => val === 'PROMEDIO' ? (isMobile ? 12 : 14) : (isMobile ? 10 : 12), 
         fontWeight: (val: string) => val === 'PROMEDIO' ? 800 : 500, 
-        margin: 15 
+        margin: isMobile ? 8 : 15 
       },
       axisLine: { show: false },
       axisTick: { show: false }
@@ -200,11 +217,11 @@ const StocksReturnsHeatmap = ({ historicalData }: StocksReturnsHeatmapProps) => 
         orient: 'horizontal',
         left: 'center',
         bottom: '0px',
-        itemWidth: 15,
-        itemHeight: 200,
+        itemWidth: isMobile ? 10 : 15,
+        itemHeight: isMobile ? 120 : 200,
         seriesIndex: [0], 
         text: [`${data.maxM}%`, `${data.minM}%`],
-        textStyle: { color: '#94a3b8', fontSize: 10 },
+        textStyle: { color: '#94a3b8', fontSize: isMobile ? 8 : 10 },
         inRange: {
           color: ['#be123c', '#fb7185', '#334155', '#4ade80', '#15803d'] 
         }
@@ -228,7 +245,7 @@ const StocksReturnsHeatmap = ({ historicalData }: StocksReturnsHeatmapProps) => 
           show: true,
           formatter: (p: any) => (p && p.data && p.data[2] !== null) ? `${p.data[2]}%` : '',
           color: '#fff',
-          fontSize: 9,
+          fontSize: isMobile ? 7 : 9,
           fontWeight: 600
         },
         itemStyle: {
@@ -249,7 +266,7 @@ const StocksReturnsHeatmap = ({ historicalData }: StocksReturnsHeatmapProps) => 
           show: true,
           formatter: (p: any) => (p && p.data && p.data[2] !== null) ? `${p.data[2]}%` : '',
           color: '#fff',
-          fontSize: 10,
+          fontSize: isMobile ? 8 : 10,
           fontWeight: 700
         },
         itemStyle: {
@@ -270,7 +287,7 @@ const StocksReturnsHeatmap = ({ historicalData }: StocksReturnsHeatmapProps) => 
           show: true,
           formatter: (p: any) => (p && p.data && p.data[2] !== null) ? `${p.data[2]}%` : '',
           color: '#fff',
-          fontSize: 10,
+          fontSize: isMobile ? 8 : 10,
           fontWeight: 700
         },
         itemStyle: {
@@ -287,11 +304,16 @@ const StocksReturnsHeatmap = ({ historicalData }: StocksReturnsHeatmapProps) => 
   };
 
   return (
-    <div className="premium-glass panel-glow" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
-      <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.2rem', color: '#f8fafc', fontWeight: 600, borderLeft: '4px solid #3b82f6', paddingLeft: '1rem' }}>
+    <div className="premium-glass panel-glow" style={{ 
+      padding: isMobile ? '1rem' : '1.5rem', 
+      marginBottom: '2rem',
+      width: isMobile ? '90%' : '100%',
+      margin: isMobile ? '0 auto 2rem auto' : '0 0 2rem 0'
+    }}>
+      <h3 style={{ margin: '0 0 1.5rem 0', fontSize: isMobile ? '1rem' : '1.2rem', color: '#f8fafc', fontWeight: 600, borderLeft: '4px solid #3b82f6', paddingLeft: '1rem' }}>
         Rendimientos Históricos (%)
       </h3>
-      <div style={{ height: `${data.years.length * 52 + 100}px`, minHeight: '350px', width: '100%' }}>
+      <div style={{ height: `${data.years.length * (isMobile ? 40 : 52) + 100}px`, minHeight: isMobile ? '300px' : '350px', width: '100%' }}>
         <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />
       </div>
     </div>

@@ -31,8 +31,8 @@ serve(async (req) => {
       'notes': { table: 'live_letras', url: 'https://data912.com/live/arg_notes' },
       'bonds': { table: 'live_bonos', url: 'https://data912.com/live/arg_bonds' },
       // Cedears y Stocks se pueden activar creando sus tablas en el futuro:
-      // 'cedears': { table: 'live_cedears', url: 'https://data912.com/live/arg_cedears' },
-      // 'stocks': { table: 'live_stocks', url: 'https://data912.com/live/stocks_bue' }
+      'cedears': { table: 'live_cedears', url: 'https://data912.com/live/arg_cedears' },
+      'stocks': { table: 'live_stocks', url: 'https://data912.com/live/arg_stocks' }
     }
 
     const config = cacheConfigs[type]

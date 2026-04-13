@@ -53,13 +53,22 @@ interface StocksSunburstProps {
 }
 
 const StocksSunburst: React.FC<StocksSunburstProps> = ({ stocks, volumeMode = 'nominal', onSelectSymbol }) => {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const chartOptions = useMemo(() => {
     // 1. Agrupamiento Jerárquico
     const sectorMap: Record<string, any> = {};
 
     stocks.forEach(stock => {
-      // Ignoramos especies sin volumen para limpiar el gráfico y que no ocupen espacios invisibles
-      // y filtramos únicamente los de Moneda Peso (ARS) para no cruzar dimensiones en el Sunburst
       if (!stock.v || stock.v <= 0 || stock.moneda !== 'ARS') return;
 
       const sector = stock.sector || 'General';
@@ -76,7 +85,6 @@ const StocksSunburst: React.FC<StocksSunburstProps> = ({ stocks, volumeMode = 'n
       });
     });
 
-    // Transformación al array de diccionarios Data Tree
     const dataTree = Object.keys(sectorMap).map(sectorName => {
       const children = Object.keys(sectorMap[sectorName].industries).map(indName => {
         return {
@@ -88,11 +96,13 @@ const StocksSunburst: React.FC<StocksSunburstProps> = ({ stocks, volumeMode = 'n
       return {
         name: sectorName,
         itemStyle: {
-          color: getSectorHexColor(sectorName) // Asignamos el color maestro
+          color: getSectorHexColor(sectorName)
         },
         children
       };
     });
+
+    const outerRadius = isMobile ? '70%' : '80%';
 
     return {
       tooltip: {
@@ -112,60 +122,56 @@ const StocksSunburst: React.FC<StocksSunburstProps> = ({ stocks, volumeMode = 'n
       series: {
         type: 'sunburst',
         data: dataTree,
-        radius: ['15%', '90%'], // El 'Drink Flavors' tiene centro hueco
+        radius: ['15%', outerRadius], 
         sort: 'desc',
         itemStyle: {
           borderRadius: 4,
           borderWidth: 2,
-          borderColor: '#0f172a' // Unifica el borde con el fondo del panel para un look nítido
+          borderColor: '#0f172a'
         },
         levels: [
-          {}, // Raíz Vacía (Hollow)
+          {}, 
           {
             // Nivel 1: Sector
             r0: '15%',
-            r: '45%',
-            itemStyle: {
-              borderWidth: 2
-            },
+            r: isMobile ? '35%' : '40%',
+            itemStyle: { borderWidth: 2 },
             label: { show: false }
           },
           {
             // Nivel 2: Industria
-            r0: '45%',
-            r: '75%',
+            r0: isMobile ? '35%' : '40%',
+            r: isMobile ? '60%' : '65%',
             itemStyle: {},
             label: { show: false }
           },
           {
             // Nivel 3: Símbolo (Outer edge)
-            r0: '75%',
-            r: '90%',
+            r0: isMobile ? '60%' : '65%',
+            r: outerRadius,
             label: {
               position: 'outside',
-              padding: 4,
+              padding: isMobile ? 2 : 4,
               silent: false,
-              fontSize: 10,
+              fontSize: isMobile ? 8 : 10,
               fontWeight: 'bold',
               minAngle: 3
             },
-            itemStyle: {
-              borderWidth: 2,
-            }
+            itemStyle: { borderWidth: 2 }
           }
         ]
       }
     };
-  }, [stocks]);
+  }, [stocks, isMobile, volumeMode]);
 
   return (
-    <div className="premium-glass panel-glow animate-fade-in" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
-      <h3 style={{ margin: 0, marginBottom: '1.5rem', color: '#f8fafc', fontSize: '1.2rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <div className="premium-glass panel-glow animate-fade-in" style={{ padding: isMobile ? '1rem' : '1.5rem', marginBottom: '2rem' }}>
+      <h3 style={{ margin: 0, marginBottom: '1.5rem', color: '#f8fafc', fontSize: isMobile ? '1rem' : '1.2rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <span style={{ display: 'inline-block', width: '4px', height: '16px', backgroundColor: 'var(--accent-color)', borderRadius: '2px' }}></span>
         Ecosistema por Volumen Operado
       </h3>
       
-      <div style={{ height: '600px', width: '100%' }}>
+      <div style={{ height: isMobile ? '400px' : '600px', width: '100%' }}>
         <ReactECharts
           option={chartOptions}
           style={{ height: '100%', width: '100%' }}

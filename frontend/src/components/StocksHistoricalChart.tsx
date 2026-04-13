@@ -24,7 +24,17 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
   const [data, setData] = useState<HistoricalData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const chartRef = useRef<any>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +64,7 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
     const volumes = data.map((item, index) => [
       index,
       item.v,
-      item.c > item.o ? 1 : -1 // Color based on up/down
+      item.c > item.o ? 1 : -1 
     ]);
 
     return {
@@ -68,19 +78,16 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
         textStyle: { color: '#e2e8f0' },
         formatter: (params: any) => {
           const p = params[0];
-          const v = params[1];
           const item = data[p.dataIndex];
+          if (!item) return '';
           return `
             <div style="font-family: Inter, sans-serif; padding: 4px;">
               <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">
                 ${item.date}
               </div>
-              <div style="display: grid; grid-template-columns: auto auto; gap: 8px; font-size: 12px;">
-                <span style="color: #94a3b8">Apertura:</span><span style="color: #fff; text-align: right">$${item.o.toLocaleString()}</span>
+              <div style="display: grid; grid-template-columns: auto auto; gap: 8px; font-size: 11px;">
                 <span style="color: #94a3b8">Cierre:</span><span style="color: #fff; text-align: right">$${item.c.toLocaleString()}</span>
-                <span style="color: #94a3b8">Mínimo:</span><span style="color: #fff; text-align: right">$${item.l.toLocaleString()}</span>
-                <span style="color: #94a3b8">Máximo:</span><span style="color: #fff; text-align: right">$${item.h.toLocaleString()}</span>
-                <span style="color: #94a3b8">Volumen:</span><span style="color: #3b82f6; text-align: right">${item.v.toLocaleString()}</span>
+                <span style="color: #94a3b8">Var:</span><span style="color: ${item.c > item.o ? '#10b981' : '#ef4444'}; text-align: right">${(((item.c - item.o)/item.o)*100).toFixed(2)}%</span>
               </div>
             </div>
           `;
@@ -91,8 +98,8 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
         label: { backgroundColor: '#1e293b' }
       },
       grid: [
-        { left: '50px', right: '40px', top: '40px', height: '65%' },
-        { left: '50px', right: '40px', top: '78%', height: '12%' }
+        { left: isMobile ? '35px' : '50px', right: isMobile ? '10px' : '40px', top: '30px', height: '65%' },
+        { left: isMobile ? '35px' : '50px', right: isMobile ? '10px' : '40px', top: '78%', height: '12%' }
       ],
       xAxis: [
         {
@@ -101,7 +108,7 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
           scale: true,
           boundaryGap: false,
           axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-          axisLabel: { color: '#64748b' },
+          axisLabel: { color: '#64748b', fontSize: 10 },
           splitLine: { show: false }
         },
         {
@@ -119,7 +126,7 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
         {
           scale: true,
           axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-          axisLabel: { color: '#64748b' },
+          axisLabel: { color: '#64748b', fontSize: 10 },
           splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } }
         },
         {
@@ -138,7 +145,7 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
           end: 100
         },
         {
-          show: true,
+          show: !isMobile,
           xAxisIndex: [0, 1],
           type: 'slider',
           top: '92%',
@@ -157,8 +164,8 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
           type: 'candlestick',
           data: values,
           itemStyle: {
-            color: '#10b981', // Up
-            color0: '#ef4444', // Down
+            color: '#10b981', 
+            color0: '#ef4444', 
             borderColor: '#10b981',
             borderColor0: '#ef4444'
           }
@@ -177,7 +184,7 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
         }
       ]
     };
-  }, [data, symbol]);
+  }, [data, symbol, isMobile]);
 
   const setTimeRange = (range: string) => {
     if (!data.length || !chartRef.current) return;
@@ -205,7 +212,7 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
 
   if (loading) {
     return (
-      <div className="premium-glass panel-glow animate-fade-in" style={{ padding: '2rem', height: '650px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+      <div className="premium-glass panel-glow animate-fade-in" style={{ padding: '2rem', height: isMobile ? '400px' : '650px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
         <span className="text-dim">Cargando historial de {symbol}...</span>
       </div>
@@ -221,49 +228,88 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
     );
   }
 
+  const periodFilters = (
+    <div style={{ 
+      display: 'flex', 
+      gap: '4px', 
+      backgroundColor: 'rgba(0,0,0,0.2)', 
+      padding: '4px', 
+      borderRadius: '10px', 
+      border: '1px solid rgba(255,255,255,0.05)',
+      width: isMobile ? '100%' : 'fit-content',
+      justifyContent: isMobile ? 'space-around' : 'flex-start'
+    }}>
+      {['1M', '3M', '6M', '1Y', 'ALL'].map(r => (
+        <button 
+          key={r}
+          onClick={() => setTimeRange(r)}
+          style={{
+            padding: isMobile ? '8px 12px' : '4px 8px', 
+            fontSize: isMobile ? '0.8rem' : '0.7rem', 
+            fontWeight: 600, border: 'none', borderRadius: '6px',
+            backgroundColor: 'transparent', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s',
+            flex: isMobile ? 1 : 'none'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.color = '#fff'}
+          onMouseOut={(e) => e.currentTarget.style.color = '#64748b'}
+        >
+          {r}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
-    <div className="premium-glass panel-glow animate-bounce-in" style={{ padding: '1.5rem', marginBottom: '2rem', position: 'relative' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+    <div className="premium-glass panel-glow animate-bounce-in" style={{ 
+      padding: isMobile ? '1rem' : '1.5rem', 
+      marginBottom: '2rem', 
+      position: 'relative',
+      width: isMobile ? '95%' : '100%',
+      margin: isMobile ? '0 auto 2rem auto' : '0 0 2rem 0'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
+        justifyContent: 'space-between', 
+        alignItems: isMobile ? 'flex-start' : 'center', 
+        marginBottom: '1.5rem',
+        gap: isMobile ? '1rem' : '0'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%' }}>
           <div style={{ padding: '8px', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderRadius: '10px' }}>
             <BarChart3 size={20} color="#3b82f6" />
           </div>
-          <div>
-            <h3 style={{ margin: 0, color: 'white', fontSize: '1.1rem', fontWeight: 600 }}>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ margin: 0, color: 'white', fontSize: isMobile ? '1rem' : '1.1rem', fontWeight: 600 }}>
               Análisis Histórico: <span style={{ color: '#3b82f6' }}>{symbol}</span>
             </h3>
-            <p style={{ margin: 0, color: '#64748b', fontSize: '0.8rem' }}>Gráfico de Velas Japonesas y Volumen Diario</p>
+            <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem' }}>Velas Japonesas y Volumen Diario</p>
           </div>
+          {isMobile && (
+            <button 
+              onClick={onClose}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors"
+            >
+              <X size={24} color="#94a3b8" />
+            </button>
+          )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ display: 'flex', gap: '4px', backgroundColor: 'rgba(0,0,0,0.2)', padding: '3px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', marginRight: '12px' }}>
-            {['1M', '3M', '6M', '1Y', 'ALL'].map(r => (
-              <button 
-                key={r}
-                onClick={() => setTimeRange(r)}
-                style={{
-                  padding: '4px 8px', fontSize: '0.7rem', fontWeight: 600, border: 'none', borderRadius: '5px',
-                  backgroundColor: 'transparent', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.color = '#fff'}
-                onMouseOut={(e) => e.currentTarget.style.color = '#64748b'}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors"
-            title="Cerrar análisis"
-          >
-            <X size={20} color="#94a3b8" />
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: isMobile ? '100%' : 'auto' }}>
+          {!isMobile && periodFilters}
+          {!isMobile && (
+            <button 
+              onClick={onClose}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors"
+              title="Cerrar análisis"
+            >
+              <X size={20} color="#94a3b8" />
+            </button>
+          )}
         </div>
       </div>
       
-      <div style={{ height: '550px', width: '100%', marginBottom: '2rem' }}>
+      <div style={{ height: isMobile ? '350px' : '550px', width: '100%', marginBottom: isMobile ? '1rem' : '2rem' }}>
         <ReactECharts
           ref={chartRef}
           option={chartOptions}
@@ -272,11 +318,12 @@ const StocksHistoricalChart: React.FC<StocksHistoricalChartProps> = ({ symbol, o
         />
       </div>
 
-      {/* Heatmap de Rendimientos Mensuales */}
-      <StocksReturnsHeatmap historicalData={data} />
+      {isMobile && <div style={{ marginBottom: '1.5rem' }}>{periodFilters}</div>}
 
-      {/* Resumen Técnico e Indicadores */}
-      <StocksTechnicalSummary symbol={symbol} historicalData={data} />
+      <div className={isMobile ? 'flex flex-col gap-4' : ''} style={isMobile ? { alignItems: 'center' } : {}}>
+        <StocksTechnicalSummary symbol={symbol} historicalData={data} />
+        <StocksReturnsHeatmap historicalData={data} />
+      </div>
     </div>
   );
 };

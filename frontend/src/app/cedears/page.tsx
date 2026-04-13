@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function CedearsPage() {
   return (
-    <main className="p-4 md:p-8">
+    <main>
       <StocksDashboard 
         apiEndpoint="cedears"
         title="Monitor de CEDEARs"
