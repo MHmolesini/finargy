@@ -7,9 +7,6 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true, // Requerido para despliegues estáticos
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },

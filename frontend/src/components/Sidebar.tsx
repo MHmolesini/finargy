@@ -11,6 +11,16 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const menuItems = [
     { name: 'Dashboard', path: '/', icon: '📊' },
@@ -19,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   ];
 
   const handleLinkClick = () => {
-    if (window.innerWidth <= 1024 && onClose) {
+    if (isMobile && onClose) {
       onClose();
     }
   };
@@ -41,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               color: 'var(--text-dim)',
               fontSize: '1.5rem',
               cursor: 'pointer',
-              display: window.innerWidth <= 1024 ? 'block' : 'none'
+              display: isMobile ? 'block' : 'none'
             }}
           >
             ✕
