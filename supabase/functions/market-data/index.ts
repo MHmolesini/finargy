@@ -26,32 +26,34 @@ serve(async (req) => {
 
     let liveData: any[] = []
 
-    // --- CONFIGURACIÓN DE CACHE ESCALABLE ---
-    const cacheConfigs: Record<string, { table: string, url: string }> = {
-      'notes': { table: 'live_letras', url: 'https://data912.com/live/arg_notes' },
-      'bonds': { table: 'live_bonos', url: 'https://data912.com/live/arg_bonds' },
-      // Cedears y Stocks se pueden activar creando sus tablas en el futuro:
-      'cedears': { table: 'live_cedears', url: 'https://data912.com/live/arg_cedears' },
-      'stocks': { table: 'live_stocks', url: 'https://data912.com/live/arg_stocks' }
+    // --- CONFIGURACIÓN DE CACHE ESCALABLE (Capas Bronze) ---
+    const cacheConfigs: Record<string, { table: string, url: string, goldTable?: string }> = {
+      'notes': { table: 'bronze_live_letras', url: 'https://data912.com/live/arg_notes', goldTable: 'gold_live_letras' },
+      'bonds': { table: 'bronze_live_bonos', url: 'https://data912.com/live/arg_bonds' },
+      'cedears': { table: 'bronze_live_cedears', url: 'https://data912.com/live/arg_cedears' },
+      'stocks': { table: 'bronze_live_stocks', url: 'https://data912.com/live/arg_stocks' }
     }
 
     const config = cacheConfigs[type]
 
-    // --- 1. INTENTO DE LEER DESDE CACHE (TTL 30s) ---
+    // --- 1. INTENTO DE LEER DESDE CACHE (Ahora desde la capa GOLD si existe) ---
     if (config) {
       try {
+        const checkTable = config.goldTable || config.table
         const { data: latest } = await supabaseClient
-          .from(config.table)
+          .from(checkTable)
           .select('updated_at')
           .order('updated_at', { ascending: false })
           .limit(1)
           .maybeSingle()
 
         if (latest && (new Date().getTime() - new Date(latest.updated_at).getTime() < 30000)) {
-          const { data: cached } = await supabaseClient.from(config.table).select('data')
+          // Si tenemos datos frescos en Gold/Bronze, los devolvemos
+          // Nota: Si es Gold, devolvemos todo el registro. Si es Bronze, solo la columna 'data'
+          const { data: cached } = await supabaseClient.from(checkTable).select(config.goldTable ? '*' : 'data')
           if (cached && cached.length > 0) {
-            console.log(`[Cache Hit] ${type} desde ${config.table}`)
-            liveData = cached.map(item => item.data)
+            console.log(`[Cache Hit] ${type} desde ${checkTable}`)
+            liveData = config.goldTable ? cached : cached.map(item => item.data)
           }
         }
       } catch (err) {
@@ -59,27 +61,39 @@ serve(async (req) => {
       }
     }
 
-    // --- 2. SI NO HAY CACHE, HACEMOS FETCH Y ACTUALIZAMOS DB ---
+    // --- 2. SI NO HAY CACHE, HACEMOS FETCH Y ACTUALIZAMOS BRONZE ---
     if (liveData.length === 0) {
       const apiUrl = config?.url || (type === 'cedears' ? 'https://data912.com/live/arg_cedears' : 'https://data912.com/live/stocks_bue')
       
       console.log(`[Fetch Directo] Solicitando ${type} desde ${apiUrl}`)
       const response = await fetch(apiUrl)
-      liveData = await response.json()
+      const rawData = await response.json()
 
-      if (config && Array.isArray(liveData)) {
+      if (config && Array.isArray(rawData)) {
         try {
-          const toUpsert = liveData.map(item => ({
+          const toUpsert = rawData.map(item => ({
             symbol: item.symbol,
             data: item,
             updated_at: new Date().toISOString()
           }))
 
+          // 1. Guardamos en BRONZE (esto dispara el TRIGGER en Postgres)
           await supabaseClient.from(config.table).upsert(toUpsert, { onConflict: 'symbol' })
-          console.log(`[Cache Update] ${toUpsert.length} registros en ${config.table}`)
+          console.log(`[Bronze Update] ${toUpsert.length} registros en ${config.table}`)
+
+          // 2. Si hay tabla GOLD, leemos el resultado procesado
+          if (config.goldTable) {
+            const { data: processed } = await supabaseClient.from(config.goldTable).select('*')
+            liveData = processed || rawData
+          } else {
+            liveData = rawData
+          }
         } catch (upsertErr) {
           console.error(`Error actualizando ${config.table}:`, upsertErr)
+          liveData = rawData
         }
+      } else {
+        liveData = rawData
       }
     }
 
@@ -90,9 +104,17 @@ serve(async (req) => {
 
     if (error) throw error
 
+    // Si los datos vienen de GOLD, ya están enriquecidos y listos
+    if (config?.goldTable) {
+      return new Response(JSON.stringify(liveData), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
+
     const metadataMap = Object.fromEntries(metadataList.map(m => [m.symbol, m]))
 
-    // 3. Enriquecimiento (Lógica portada de index.ts)
+    // 3. Enriquecimiento manual (solo para activos sin capa GOLD)
     const enrichedData = liveData.map((asset: any) => {
       let baseSymbol = asset.symbol;
       const meta = metadataMap[baseSymbol];

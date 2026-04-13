@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import NotesTable from './NotesTable';
 import YieldCurveChart from './YieldCurveChart';
 import MarketHeatmap from './MarketHeatmap';
+import DashboardSkeleton from './DashboardSkeleton';
 import { fetchMarketData } from '@/utils/supabase';
 
 export interface BaseNote {
@@ -125,7 +126,7 @@ const MarketDashboard = () => {
     });
   }, [notesData, bondsData, activeMarket]);
 
-  if (loading) return <div style={{ padding: '2rem', color: 'var(--text-dim)', textAlign: 'center' }}>Cargando cotizaciones...</div>;
+  if (loading) return <DashboardSkeleton />;
   if (error) return <div style={{ padding: '2rem', color: 'var(--danger)', textAlign: 'center' }}>{error}</div>;
 
   return (
