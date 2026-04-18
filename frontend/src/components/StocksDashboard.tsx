@@ -6,6 +6,7 @@ import StocksSunburst from './StocksSunburst';
 import StocksHeatmap from './StocksHeatmap';
 import StocksScatter from './StocksScatter';
 import StocksHistoricalChart from './StocksHistoricalChart';
+import StocksDashboardSkeleton from './StocksDashboardSkeleton';
 import { RefreshCw, Filter, ChevronDown, Check, Search, X } from 'lucide-react';
 import { fetchMarketData } from '@/utils/supabase';
 
@@ -199,13 +200,7 @@ const StocksDashboard: React.FC<StocksDashboardProps> = ({
     );
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
-      </div>
-    );
-  }
+  if (loading) return <StocksDashboardSkeleton />;
 
   if (error) {
     return (

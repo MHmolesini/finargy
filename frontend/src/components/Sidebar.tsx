@@ -24,6 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const menuItems = [
     { name: 'Dashboard', path: '/', icon: '📊' },
+    { name: 'Dólar', path: '/dolar', icon: '💵' },
     { name: 'Acciones', path: '/stocks', icon: '📈' },
     { name: 'CEDEARs', path: '/cedears', icon: '🌍' },
   ];
