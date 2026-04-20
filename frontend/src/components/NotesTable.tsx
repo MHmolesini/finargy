@@ -46,10 +46,11 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
   }, [sortedNotes]);
 
   // Máximos para barras
-  const { maxVolume, maxOps } = useMemo(() => {
-    if (notes.length === 0) return { maxVolume: 1, maxOps: 1 };
+  const { maxVolume, maxVolMonto, maxOps } = useMemo(() => {
+    if (notes.length === 0) return { maxVolume: 1, maxVolMonto: 1, maxOps: 1 };
     return {
       maxVolume: Math.max(...notes.map(n => n.v || 0), 1),
+      maxVolMonto: Math.max(...notes.map(n => n.vol_monto || 0), 1),
       maxOps: Math.max(...notes.map(n => n.q_op || 0), 1),
     };
   }, [notes]);
@@ -92,7 +93,10 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
               <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('tem')}>TEM % {getSortIcon('tem')}</th>
               <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('tea')}>TEA % {getSortIcon('tea')}</th>
               <th style={{ borderLeft: '1px solid var(--border-color)', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('v')}>
-                Volumen {getSortIcon('v')}
+                Volumen
+              </th>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('vol_monto')}>
+                Volumen $ {getSortIcon('vol_monto')}
               </th>
               <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('q_op')}>Ops {getSortIcon('q_op')}</th>
               <th style={{ textAlign: 'right', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('avgTicket')}>
@@ -183,20 +187,38 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                       </td>
 
                       {/* Volumen */}
-                      <td style={{ borderLeft: '1px solid var(--border-color)', minWidth: '150px' }}>
+                      <td style={{ borderLeft: '1px solid var(--border-color)', minWidth: '130px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                           <span className="font-mono text-[0.85rem] font-medium text-gray-300">
                             {(note.v && note.v > 0) ? (
                               note.v >= 1000000 
-                                ? `${(note.v / 1000000).toFixed(2)}M` 
+                                ? `${(note.v / 1000000).toFixed(1)}M` 
                                 : note.v >= 1000 
-                                  ? `${(note.v / 1000).toFixed(1)}K` 
+                                  ? `${(note.v / 1000).toFixed(0)}K` 
                                   : note.v.toLocaleString('es-AR')
                             ) : '-'}
                           </span>
                         </div>
                         <div className="bar-container">
                           <div className="bar-fill" style={{ width: `${volPercentage}%` }}></div>
+                        </div>
+                      </td>
+
+                      {/* Volumen $ */}
+                      <td style={{ minWidth: '150px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span className="font-mono text-[0.85rem] font-medium text-emerald-400">
+                            $ {(note.vol_monto && note.vol_monto > 0) ? (
+                              note.vol_monto >= 1000000 
+                                ? `${(note.vol_monto / 1000000).toFixed(2)}M` 
+                                : note.vol_monto >= 1000 
+                                  ? `${(note.vol_monto / 1000).toFixed(1)}K` 
+                                  : note.vol_monto.toLocaleString('es-AR', { maximumFractionDigits: 0 })
+                            ) : '-'}
+                          </span>
+                        </div>
+                        <div className="bar-container">
+                          <div className="bar-fill" style={{ width: `${((note.vol_monto || 0) / (maxVolMonto || 1)) * 100}%`, backgroundColor: '#34d399' }}></div>
                         </div>
                       </td>
 

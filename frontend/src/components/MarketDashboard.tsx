@@ -20,6 +20,11 @@ export interface BaseNote {
   tipo_activo?: string;
   fecha_vencimiento?: string | null;
   precio_final_estimado?: number | null;
+  daystovto?: number | null;
+  tasa_directa?: number | null;
+  tem?: number | null;
+  tea?: number | null;
+  vol_monto?: number | null;
 }
 
 export interface ProcessedNote extends BaseNote {
@@ -72,33 +77,36 @@ const MarketDashboard = () => {
     const activeData = activeMarket === 'letras' ? notesData : bondsData;
 
     return activeData.map(note => {
-      let daysToVto = null;
-      if (note.fecha_vencimiento) {
+      // Priorizar datos calculados en Supabase
+      let daysToVto = note.daystovto ?? null;
+      
+      if (daysToVto === null && note.fecha_vencimiento) {
         const vto = new Date(note.fecha_vencimiento);
         vto.setHours(0, 0, 0, 0);
         const diffTime = vto.getTime() - today.getTime();
         daysToVto = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       }
 
-      let tasaDirecta = null;
-      let tem = null;
-      let tea = null;
+      let tasaDirecta = note.tasa_directa ?? null;
+      let tem = note.tem ?? null;
+      let tea = note.tea ?? null;
 
       let precioAnterior = null;
       let diasAnterior = null;
       let temAnterior = null;
       let teaAnterior = null;
 
-      if (note.precio_final_estimado && note.c > 0 && daysToVto !== null && daysToVto > 0) {
-        // --- CÁLCULO HOY ---
+      if ((tasaDirecta === null || tem === null) && note.precio_final_estimado && note.c > 0 && daysToVto !== null && daysToVto > 0) {
+        // --- CÁLCULO FALLBACK (Si falla Supabase) ---
         const factor = note.precio_final_estimado / note.c;
         if (factor > 0) {
-          tasaDirecta = (factor - 1) * 100;
-          tem = (Math.pow(factor, 30 / daysToVto) - 1) * 100;
-          tea = (Math.pow(factor, 365 / daysToVto) - 1) * 100;
+          if (tasaDirecta === null) tasaDirecta = (factor - 1) * 100;
+          if (tem === null) tem = (Math.pow(factor, 30 / daysToVto) - 1) * 100;
+          if (tea === null) tea = (Math.pow(factor, 365 / daysToVto) - 1) * 100;
         }
+      }
 
-        // --- INGENIERÍA INVERSA (T-1) ---
+      if (note.precio_final_estimado && note.c > 0 && (daysToVto || 0) > 0) {
         let pct = note.pct_change || 0;
         precioAnterior = note.c / (1 + (pct / 100));
         diasAnterior = daysToVto + 1; 
@@ -118,6 +126,7 @@ const MarketDashboard = () => {
         tasaDirecta,
         tem,
         tea,
+        vol_monto: note.vol_monto ?? (note.v && note.c ? (note.v / 100) * note.c : 0),
         precioAnterior,
         diasAnterior,
         temAnterior,

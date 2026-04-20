@@ -24,52 +24,52 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    let liveData: any[] = []
-
-    // --- CONFIGURACIÓN DE CACHE ESCALABLE (Capas Bronze) ---
+    // --- CONFIGURACIÓN DE CAPAS MEDALLION ---
     const cacheConfigs: Record<string, { table: string, url: string, goldTable?: string }> = {
       'notes': { table: 'bronze_live_letras', url: 'https://data912.com/live/arg_notes', goldTable: 'gold_live_letras' },
-      'bonds': { table: 'bronze_live_bonos', url: 'https://data912.com/live/arg_bonds' },
-      'cedears': { table: 'bronze_live_cedears', url: 'https://data912.com/live/arg_cedears' },
-      'stocks': { table: 'bronze_live_stocks', url: 'https://data912.com/live/arg_stocks' }
+      'bonds': { table: 'bronze_live_bonos', url: 'https://data912.com/live/arg_bonds', goldTable: 'gold_live_bonos' },
+      'cedears': { table: 'bronze_live_cedears', url: 'https://data912.com/live/arg_cedears', goldTable: 'gold_live_cedears' },
+      'stocks': { table: 'bronze_live_stocks', url: 'https://data912.com/live/arg_stocks', goldTable: 'gold_live_stocks' },
+      'dolar': { table: 'gold_live_dolar', url: '', goldTable: 'gold_live_dolar' }
     }
 
     const config = cacheConfigs[type]
+    if (!config) throw new Error('Tipo de activo no soportado')
 
-    // --- 1. INTENTO DE LEER DESDE CACHE (Ahora desde la capa GOLD si existe) ---
-    if (config) {
-      try {
-        const checkTable = config.goldTable || config.table
-        const { data: latest } = await supabaseClient
-          .from(checkTable)
-          .select('updated_at')
-          .order('updated_at', { ascending: false })
-          .limit(1)
-          .maybeSingle()
+    // --- 1. INTENTO DE LEER DESDE CACHE (Capa GOLD) ---
+    const checkTable = config.goldTable || config.table
+    const { data: latest } = await supabaseClient
+      .from(checkTable)
+      .select('updated_at')
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
 
-        if (latest && (new Date().getTime() - new Date(latest.updated_at).getTime() < 30000)) {
-          // Si tenemos datos frescos en Gold/Bronze, los devolvemos
-          // Nota: Si es Gold, devolvemos todo el registro. Si es Bronze, solo la columna 'data'
-          const { data: cached } = await supabaseClient.from(checkTable).select(config.goldTable ? '*' : 'data')
-          if (cached && cached.length > 0) {
-            console.log(`[Cache Hit] ${type} desde ${checkTable}`)
-            liveData = config.goldTable ? cached : cached.map(item => item.data)
-          }
-        }
-      } catch (err) {
-        console.error(`Error en cache de ${type}:`, err)
+    // Si la data es fresca (menos de 30 segundos), la devolvemos de inmediato
+    if (latest && (new Date().getTime() - new Date(latest.updated_at).getTime() < 30000)) {
+      const { data: cached } = await supabaseClient
+        .from(checkTable)
+        .select(config.goldTable ? '*' : 'data')
+        .order(config.goldTable ? 'symbol' : 'id', { ascending: true })
+
+      if (cached && cached.length > 0) {
+        console.log(`[Cache Hit] ${type} desde ${checkTable}`)
+        const result = config.goldTable ? cached : cached.map((item: any) => item.data)
+        return new Response(JSON.stringify(result), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        })
       }
     }
 
-    // --- 2. SI NO HAY CACHE, HACEMOS FETCH Y ACTUALIZAMOS BRONZE ---
-    if (liveData.length === 0) {
-      const apiUrl = config?.url || (type === 'cedears' ? 'https://data912.com/live/arg_cedears' : 'https://data912.com/live/stocks_bue')
-      
-      console.log(`[Fetch Directo] Solicitando ${type} desde ${apiUrl}`)
-      const response = await fetch(apiUrl)
+    // --- 2. SI NO HAY CACHE O ES VIEJA, FETCH Y ACTUALIZACIÓN ---
+    let liveData: any[] = []
+    if (config.url) {
+      console.log(`[Fetch Directo] Solicitando ${type} desde ${config.url}`)
+      const response = await fetch(config.url)
       const rawData = await response.json()
 
-      if (config && Array.isArray(rawData)) {
+      if (Array.isArray(rawData)) {
         try {
           const toUpsert = rawData.map(item => ({
             symbol: item.symbol,
@@ -77,13 +77,15 @@ serve(async (req) => {
             updated_at: new Date().toISOString()
           }))
 
-          // 1. Guardamos en BRONZE (esto dispara el TRIGGER en Postgres)
+          // Guardamos en BRONZE (esto dispara la cadena de triggers: Bronze -> Silver -> Gold)
           await supabaseClient.from(config.table).upsert(toUpsert, { onConflict: 'symbol' })
-          console.log(`[Bronze Update] ${toUpsert.length} registros en ${config.table}`)
-
-          // 2. Si hay tabla GOLD, leemos el resultado procesado
+          
+          // Importante: Devolvemos desde GOLD después del upsert para obtener los campos calculados
           if (config.goldTable) {
-            const { data: processed } = await supabaseClient.from(config.goldTable).select('*')
+            const { data: processed } = await supabaseClient
+              .from(config.goldTable)
+              .select('*')
+              .order('symbol', { ascending: true })
             liveData = processed || rawData
           } else {
             liveData = rawData
@@ -95,73 +97,16 @@ serve(async (req) => {
       } else {
         liveData = rawData
       }
+    } else {
+      // Caso para tipos sin URL como 'dolar'
+      const { data: processed } = await supabaseClient
+        .from(config.goldTable!)
+        .select('*')
+        .order('symbol', { ascending: true })
+      liveData = processed || []
     }
 
-    // 2. Fetch de metadatos desde Postgres
-    const { data: metadataList, error } = await supabaseClient
-      .from('assets_metadata')
-      .select('*')
-
-    if (error) throw error
-
-    // Si los datos vienen de GOLD, ya están enriquecidos y listos
-    if (config?.goldTable) {
-      return new Response(JSON.stringify(liveData), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      })
-    }
-
-    const metadataMap = Object.fromEntries(metadataList.map(m => [m.symbol, m]))
-
-    // 3. Enriquecimiento manual (solo para activos sin capa GOLD)
-    const enrichedData = liveData.map((asset: any) => {
-      let baseSymbol = asset.symbol;
-      const meta = metadataMap[baseSymbol];
-      
-      let moneda = 'ARS';
-      let precio_final_estimado = null;
-
-      // Lógica específica para Bonos/Lecaps
-      if (type === 'notes' || type === 'bonds') {
-        if (meta?.fecha_emision && meta?.fecha_vencimiento && meta?.tasa_licitacion) {
-          const emision = new Date(meta.fecha_emision);
-          const vencimiento = new Date(meta.fecha_vencimiento);
-          const diffTime = vencimiento.getTime() - emision.getTime();
-          const diasReales = Math.round(diffTime / (1000 * 60 * 60 * 24));
-          const diasCalc = Math.max(0, diasReales - 1);
-          precio_final_estimado = 100 * Math.pow((1 + meta.tasa_licitacion), diasCalc / 30.0);
-        }
-      }
-
-      // Lógica de Moneda para Cedears/Stocks
-      if (type === 'stocks' || type === 'cedears') {
-        if ((baseSymbol.endsWith('D') || baseSymbol.endsWith('C')) && baseSymbol.length > 2) {
-            // Excepción específica: YPFD es peso
-            if (baseSymbol !== 'YPFD') {
-              moneda = 'USD';
-              const potentialParent = baseSymbol.slice(0, -1);
-              if (metadataMap[potentialParent]) baseSymbol = potentialParent;
-            }
-        }
-        // Excepciones manuales
-        if (asset.symbol === 'BMA.D' || asset.symbol === 'ALUAD') moneda = 'USD';
-      }
-
-      const finalMeta = metadataMap[baseSymbol] || meta;
-
-      return {
-        ...asset,
-        sector: finalMeta?.sector || 'General',
-        industria: finalMeta?.industria || 'General',
-        tipo_activo: finalMeta?.tipo_activo || (type === 'bonds' ? 'bono' : 'acciones'),
-        fecha_vencimiento: finalMeta?.fecha_vencimiento || null,
-        precio_final_estimado,
-        moneda
-      };
-    });
-
-    return new Response(JSON.stringify(enrichedData), {
+    return new Response(JSON.stringify(liveData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
