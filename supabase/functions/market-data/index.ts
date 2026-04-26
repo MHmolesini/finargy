@@ -45,8 +45,8 @@ serve(async (req) => {
       .limit(1)
       .maybeSingle()
 
-    // Si la data es fresca (menos de 30 segundos), la devolvemos de inmediato
-    if (latest && (new Date().getTime() - new Date(latest.updated_at).getTime() < 30000)) {
+    // Si la data es fresca (menos de 60 segundos), la devolvemos de inmediato
+    if (latest && (new Date().getTime() - new Date(latest.updated_at).getTime() < 60000)) {
       const { data: cached } = await supabaseClient
         .from(checkTable)
         .select(config.goldTable ? '*' : 'data')
@@ -70,6 +70,8 @@ serve(async (req) => {
       const rawData = await response.json()
 
       if (Array.isArray(rawData)) {
+        // Ejecutamos el upsert en segundo plano (no esperamos a que termine para responder si ya tenemos la data)
+        // Pero para tipos con cálculos (Gold), sí necesitamos esperar un poco o devolver lo procesado anterior
         try {
           const toUpsert = rawData.map(item => ({
             symbol: item.symbol,
@@ -77,10 +79,8 @@ serve(async (req) => {
             updated_at: new Date().toISOString()
           }))
 
-          // Guardamos en BRONZE (esto dispara la cadena de triggers: Bronze -> Silver -> Gold)
           await supabaseClient.from(config.table).upsert(toUpsert, { onConflict: 'symbol' })
           
-          // Importante: Devolvemos desde GOLD después del upsert para obtener los campos calculados
           if (config.goldTable) {
             const { data: processed } = await supabaseClient
               .from(config.goldTable)
@@ -90,15 +90,14 @@ serve(async (req) => {
           } else {
             liveData = rawData
           }
-        } catch (upsertErr) {
-          console.error(`Error actualizando ${config.table}:`, upsertErr)
+        } catch (dbErr) {
+          console.error(`Error en DB para ${type}:`, dbErr)
           liveData = rawData
         }
       } else {
         liveData = rawData
       }
     } else {
-      // Caso para tipos sin URL como 'dolar'
       const { data: processed } = await supabaseClient
         .from(config.goldTable!)
         .select('*')

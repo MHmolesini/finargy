@@ -190,13 +190,7 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                       <td style={{ borderLeft: '1px solid var(--border-color)', minWidth: '130px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                           <span className="font-mono text-[0.85rem] font-medium text-gray-300">
-                            {(note.v && note.v > 0) ? (
-                              note.v >= 1000000 
-                                ? `${(note.v / 1000000).toFixed(1)}M` 
-                                : note.v >= 1000 
-                                  ? `${(note.v / 1000).toFixed(0)}K` 
-                                  : note.v.toLocaleString('es-AR')
-                            ) : '-'}
+                            {(note.v && note.v > 0) ? note.v.toLocaleString('es-AR') : '-'}
                           </span>
                         </div>
                         <div className="bar-container">
@@ -208,13 +202,7 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                       <td style={{ minWidth: '150px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                           <span className="font-mono text-[0.85rem] font-medium text-emerald-400">
-                            $ {(note.vol_monto && note.vol_monto > 0) ? (
-                              note.vol_monto >= 1000000 
-                                ? `${(note.vol_monto / 1000000).toFixed(2)}M` 
-                                : note.vol_monto >= 1000 
-                                  ? `${(note.vol_monto / 1000).toFixed(1)}K` 
-                                  : note.vol_monto.toLocaleString('es-AR', { maximumFractionDigits: 0 })
-                            ) : '-'}
+                            $ {(note.vol_monto && note.vol_monto > 0) ? note.vol_monto.toLocaleString('es-AR', { maximumFractionDigits: 0 }) : '-'}
                           </span>
                         </div>
                         <div className="bar-container">

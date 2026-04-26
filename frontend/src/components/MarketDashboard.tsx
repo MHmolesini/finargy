@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import NotesTable from './NotesTable';
 import YieldCurveChart from './YieldCurveChart';
 import MarketHeatmap from './MarketHeatmap';
+import BreakevenMonitor from './BreakevenMonitor';
 import DashboardSkeleton from './DashboardSkeleton';
 import { fetchMarketData } from '@/utils/supabase';
 
@@ -40,46 +41,28 @@ export interface ProcessedNote extends BaseNote {
   teaAnterior: number | null;
 }
 
-const MarketDashboard = () => {
-  const [notesData, setNotesData] = useState<BaseNote[]>([]);
-  const [bondsData, setBondsData] = useState<BaseNote[]>([]);
+interface MarketDashboardProps {
+  externalNotes?: BaseNote[];
+  externalBonds?: BaseNote[];
+}
+
+const MarketDashboard: React.FC<MarketDashboardProps> = ({ externalNotes = [], externalBonds = [] }) => {
   const [activeMarket, setActiveMarket] = useState<'letras' | 'bonos'>('letras');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [activeType, setActiveType] = useState<string | 'ALL'>('ALL');
 
-  const fetchData = async () => {
-    try {
-      const [notesJson, bondsJson] = await Promise.all([
-        fetchMarketData('notes'),
-        fetchMarketData('bonds')
-      ]);
-      setNotesData(notesJson);
-      setBondsData(bondsJson);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setError('Problema al conectar con la nube de datos.');
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 20000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Lógica de cálculo unificada para Tabla y Gráfico
-  const processedNotes: ProcessedNote[] = useMemo(() => {
+  // Lógica de procesamiento de datos
+  const processData = (data: BaseNote[]) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const activeData = activeMarket === 'letras' ? notesData : bondsData;
-
-    return activeData.map(note => {
-      // Priorizar datos calculados en Supabase
-      let daysToVto = note.daystovto ?? null;
+    return data.map(note => {      // Normalizamos la categoría a MAYÚSCULAS para la UI, pero el origen puede ser cualquier case
+      const categoriaRaw = (note.tipo_activo || 'OTROS').toLowerCase();
+      const categoria = categoriaRaw.toUpperCase();
       
+      let montoVto = note.precio_final_estimado;
+
+      let daysToVto = note.daystovto ?? null;
       if (daysToVto === null && note.fecha_vencimiento) {
         const vto = new Date(note.fecha_vencimiento);
         vto.setHours(0, 0, 0, 0);
@@ -96,9 +79,9 @@ const MarketDashboard = () => {
       let temAnterior = null;
       let teaAnterior = null;
 
-      if ((tasaDirecta === null || tem === null) && note.precio_final_estimado && note.c > 0 && daysToVto !== null && daysToVto > 0) {
-        // --- CÁLCULO FALLBACK (Si falla Supabase) ---
-        const factor = note.precio_final_estimado / note.c;
+      // Cálculo de tasas si el backend no las provee (Cálculo Nominal Simple como Fallback)
+      if ((tasaDirecta === null || tem === null) && montoVto && note.c > 0 && daysToVto !== null && daysToVto > 0) {
+        const factor = montoVto / note.c;
         if (factor > 0) {
           if (tasaDirecta === null) tasaDirecta = (factor - 1) * 100;
           if (tem === null) tem = (Math.pow(factor, 30 / daysToVto) - 1) * 100;
@@ -106,13 +89,14 @@ const MarketDashboard = () => {
         }
       }
 
-      if (note.precio_final_estimado && note.c > 0 && (daysToVto || 0) > 0) {
+      // Cálculo histórico y variaciones
+      if (montoVto && note.c > 0 && (daysToVto || 0) > 0) {
         let pct = note.pct_change || 0;
         precioAnterior = note.c / (1 + (pct / 100));
-        diasAnterior = daysToVto + 1; 
+        diasAnterior = (daysToVto || 0) + 1; 
 
-        const factorAyer = note.precio_final_estimado / precioAnterior;
-        if (factorAyer > 0) {
+        const factorAyer = montoVto / precioAnterior;
+        if (factorAyer > 0 && diasAnterior > 0) {
           temAnterior = (Math.pow(factorAyer, 30 / diasAnterior) - 1) * 100;
           teaAnterior = (Math.pow(factorAyer, 365 / diasAnterior) - 1) * 100;
         }
@@ -120,6 +104,8 @@ const MarketDashboard = () => {
 
       return {
         ...note,
+        categoria,
+        precio_final_estimado: montoVto,
         spread: (note.px_bid > 0 && note.px_ask > 0) ? ((note.px_ask - note.px_bid) / note.px_bid) * 100 : 0,
         avgTicket: (note.q_op > 0) ? (note.v / note.q_op) : 0,
         daysToVto,
@@ -133,73 +119,124 @@ const MarketDashboard = () => {
         teaAnterior
       };
     });
-  }, [notesData, bondsData, activeMarket]);
+  };
 
-  if (loading) return <DashboardSkeleton />;
-  if (error) return <div style={{ padding: '2rem', color: 'var(--danger)', textAlign: 'center' }}>{error}</div>;
+  // 1. Datos procesados totales por mercado
+  const processedNotes = useMemo(() => processData(externalNotes), [externalNotes]);
+  const processedBonds = useMemo(() => processData(externalBonds), [externalBonds]);
+
+  // 2. Tabla Fija por Mercado
+  const activeTableNotes = useMemo(() => {
+    return activeMarket === 'letras' ? processedNotes : processedBonds;
+  }, [processedNotes, processedBonds, activeMarket]);
+
+  // 3. Tipos Dinámicos Disponibles para el Mercado Seleccionado
+  const availableTypes = useMemo(() => {
+    const types = Array.from(new Set(activeTableNotes.map(n => (n as any).categoria)));
+    return types.sort();
+  }, [activeTableNotes]);
+
+  // Reset de tipo activo al cambiar de mercado
+  useEffect(() => {
+    if (availableTypes.length > 0) {
+      if (activeMarket === 'letras' && availableTypes.includes('LECAP')) {
+        setActiveType('LECAP');
+      } else {
+        setActiveType(availableTypes[0]);
+      }
+    }
+  }, [activeMarket, availableTypes]);
+
+  // 4. Datos Filtrados para el Gráfico
+  const graphNotes = useMemo(() => {
+    if (activeType === 'ALL') return activeTableNotes;
+    return activeTableNotes.filter(n => (n as any).categoria === activeType);
+  }, [activeTableNotes, activeType]);
 
   return (
     <div className="flex flex-col gap-6">
       {/* HEADER AND TABS */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '1rem' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white', fontFamily: 'Outfit, sans-serif' }}>
           Monitor de {activeMarket === 'letras' ? 'Letras (TEM)' : 'Bonos Soberanos'}
         </h2>
-        
-        {/* MARKET FILTER TOGGLE */}
-        <div className="glass" style={{ display: 'inline-flex', width: 'fit-content', padding: '0.35rem', borderRadius: '0.75rem', gap: '0.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <button
-            onClick={() => setActiveMarket('letras')}
-            style={{
-              padding: '0.5rem 1.5rem',
-              borderRadius: '0.5rem',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              transition: 'all 0.2s',
-              cursor: 'pointer',
-              border: 'none',
-              backgroundColor: activeMarket === 'letras' ? '#059669' : 'transparent',
-              color: activeMarket === 'letras' ? '#fff' : 'var(--text-dim)',
-              boxShadow: activeMarket === 'letras' ? '0 0 15px rgba(5, 150, 105, 0.4)' : 'none'
-            }}
-            onMouseOver={(e) => { if(activeMarket !== 'letras') e.currentTarget.style.color = '#fff' }}
-            onMouseOut={(e) => { if(activeMarket !== 'letras') e.currentTarget.style.color = 'var(--text-dim)' }}
-          >
-            Letras
-          </button>
-          <button
-            onClick={() => setActiveMarket('bonos')}
-            style={{
-              padding: '0.5rem 1.5rem',
-              borderRadius: '0.5rem',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              transition: 'all 0.2s',
-              cursor: 'pointer',
-              border: 'none',
-              backgroundColor: activeMarket === 'bonos' ? '#2563EB' : 'transparent',
-              color: activeMarket === 'bonos' ? '#fff' : 'var(--text-dim)',
-              boxShadow: activeMarket === 'bonos' ? '0 0 15px rgba(37, 99, 235, 0.4)' : 'none'
-            }}
-            onMouseOver={(e) => { if(activeMarket !== 'bonos') e.currentTarget.style.color = '#fff' }}
-            onMouseOut={(e) => { if(activeMarket !== 'bonos') e.currentTarget.style.color = 'var(--text-dim)' }}
-          >
-            Bonos
-          </button>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
+          {/* MARKET SELECTOR */}
+          <div className="glass" style={{ display: 'inline-flex', padding: '0.3rem', borderRadius: '0.75rem', gap: '0.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <button
+              onClick={() => setActiveMarket('letras')}
+              style={{
+                padding: '0.4rem 1.25rem',
+                borderRadius: '0.5rem',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                transition: 'all 0.2s',
+                backgroundColor: activeMarket === 'letras' ? '#10b981' : 'transparent',
+                color: activeMarket === 'letras' ? '#fff' : 'rgba(255,255,255,0.4)',
+                boxShadow: activeMarket === 'letras' ? '0 0 10px rgba(16, 185, 129, 0.3)' : 'none'
+              }}
+            >
+              Letras
+            </button>
+            <button
+              onClick={() => setActiveMarket('bonos')}
+              style={{
+                padding: '0.4rem 1.25rem',
+                borderRadius: '0.5rem',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                transition: 'all 0.2s',
+                backgroundColor: activeMarket === 'bonos' ? '#3b82f6' : 'transparent',
+                color: activeMarket === 'bonos' ? '#fff' : 'rgba(255,255,255,0.4)',
+                boxShadow: activeMarket === 'bonos' ? '0 0 10px rgba(59, 130, 246, 0.3)' : 'none'
+              }}
+            >
+              Bonos
+            </button>
+          </div>
+
+          {/* DYNAMIC TYPE SELECTOR FOR CHART */}
+          {availableTypes.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gráfico:</span>
+              <div className="glass" style={{ display: 'inline-flex', padding: '0.3rem', borderRadius: '0.75rem', gap: '0.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                {availableTypes.map(type => (
+                  <button
+                    key={type}
+                    onClick={() => setActiveType(type)}
+                    style={{
+                      padding: '0.4rem 1rem',
+                      borderRadius: '0.5rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      transition: 'all 0.2s',
+                      backgroundColor: activeType === type ? 'rgba(255,255,255,0.1)' : 'transparent',
+                      color: activeType === type ? '#fff' : 'rgba(255,255,255,0.4)',
+                      border: activeType === type ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* RE-ESTRUCTURANDO EL DATA BINDING AUTOMÁTICO */}
       <div className="w-full bg-[#111]/50 backdrop-blur-md rounded-xl border border-[#222] p-4 shadow-xl">
-        <YieldCurveChart notes={processedNotes} activeMarket={activeMarket} />
+        <YieldCurveChart notes={graphNotes} activeMarket={activeMarket} />
       </div>
 
       <div className="flex-grow min-w-0">
-        <NotesTable notes={processedNotes} />
+        <NotesTable notes={activeTableNotes} />
       </div>
 
       {/* MAPA DE CALOR GLOBAL */}
-      <MarketHeatmap notes={[...notesData, ...bondsData]} />
+      <MarketHeatmap notes={[...externalNotes, ...externalBonds]} />
     </div>
   );
 };

@@ -14,141 +14,123 @@ const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes, activeMarket }
     // Filtrar solo las notas con días y TEM válidos
     const validNotes = notes.filter(n => n.daysToVto !== null && n.daysToVto > 0 && n.tem !== null);
 
-    // Determinar los colores de cada Categoría (Tipo de Activo)
+    // --- CLASIFICACIÓN BASADA EN DASHBOARD ---
+    const getCategory = (n: any) => n.categoria || 'OTROS';
+
+    const categories = Array.from(new Set(validNotes.map(n => getCategory(n))));
     const baseColors: Record<string, string> = {
-      'LECAP': '#10b981', // Verde
-      'LECER': '#3b82f6', // Azul
-      'LELINK': '#f59e0b', // Ambar
-      'BONCAP': '#06b6d4', // Cyan brillante
-      'BONO': '#a855f7', // Purpura
-      'OTROS': '#a855f7'
+      'LECAP': '#10b981',   // Verde
+      'BONCAP': '#34d399',  // Esmeralda
+      'LECER': '#3b82f6',   // Azul
+      'BONCER': '#a855f7',  // Purpura
+      'LELINK': '#f59e0b',  // Ambar
+      'BONLINK': '#fbbf24', // Ambar claro
+      'DUALES': '#ec4899',  // Rosa
+      'OTROS': '#94a3b8'    // Gris
     };
 
-    const tipos = Array.from(new Set(validNotes.map(n => (n.tipo_activo || 'OTROS').toUpperCase())));
+    const symbolsMap: Record<string, string> = {
+      'LECAP': 'circle',
+      'LECER': 'circle',
+      'LELINK': 'circle',
+      'LETRAS': 'circle',
+      'BONCAP': 'diamond',
+      'BONCER': 'diamond',
+      'BONLINK': 'diamond',
+      'DUALES': 'diamond',
+      'BONOS': 'diamond',
+      'OTROS': 'pin'
+    };
 
-    // Mapear los datos agrupados por tipo (Hoy)
-    const activeScatterSeries = tipos.map(tipo => {
-      const tipoNotes = validNotes.filter(n => (n.tipo_activo || 'OTROS').toUpperCase() === tipo);
-      const mainColor = baseColors[tipo] || baseColors['OTROS'];
+    // Mapear los datos agrupados
+    const activeScatterSeries = categories.map(cat => {
+      const catNotes = validNotes.filter(n => getCategory(n) === cat);
+      if (catNotes.length === 0) return null;
+
+      const mainColor = baseColors[cat] || baseColors['OTROS'];
       
       return {
-        name: tipo,
+        name: cat,
         type: 'scatter',
+        symbol: symbolsMap[cat] || 'circle',
         symbolSize: 12,
-        data: tipoNotes.map(n => {
-          // Si el tem es negativo, el color individual lo pintamos rojo de alerta, sino el color principal
-          const c = (n.tem as number) < 0 ? '#ef4444' : mainColor;
+        data: catNotes.map(n => {
+          const isNegative = (n.tem as number) < 0;
           return {
             name: n.symbol,
             value: [n.daysToVto, n.tem],
             itemStyle: {
-              color: c,
+              color: isNegative ? '#ef4444' : mainColor,
               shadowBlur: 10,
-              shadowColor: (n.tem as number) < 0 ? 'rgba(239, 68, 68, 0.5)' : c
+              shadowColor: isNegative ? 'rgba(239, 68, 68, 0.5)' : mainColor
             },
             details: {
               tea: n.tea,
               tasaDirecta: n.tasaDirecta,
               temAnterior: n.temAnterior,
-              variacionTEM: (n.tem as number) - (n.temAnterior as number)
+              variacionTEM: (n.tem as number) - (n.temAnterior as number),
+              tipo: cat
             }
           };
         }),
         zlevel: 2,
-        label: {
-          show: false,
-          formatter: '{b}',
-          position: 'right',
-          color: 'rgba(255, 255, 255, 0.7)',
-          fontSize: 11,
-          distance: 8
-        },
         emphasis: {
           focus: 'series',
           scale: true,
-          itemStyle: { shadowBlur: 20 },
           label: {
             show: true,
             color: '#ffffff',
             fontSize: 13,
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            formatter: '{b}'
           }
         }
       };
-    });
+    }).filter(s => s !== null);
 
-    // Mapear los datos del Ayer (T-1) (Fantasma)
-    const seriesAnteriorData = validNotes.map(n => {
-      return {
-        name: n.symbol + ' (Ayer)',
-        value: [n.diasAnterior, n.temAnterior],
-        itemStyle: {
-          color: 'rgba(255, 255, 255, 0.4)', // Color fantasmal
-          shadowBlur: 0
-        },
-        details: {
-          tea: n.teaAnterior
-        }
-      };
-    });
-
-    // --- REGRESIÓN LOGARÍTMICA HOY: Y = a + b * ln(X) ---
-    let aLine = 0;
-    let bLine = 0;
-    let regressionData: number[][] = [];
-    
-    // --- REGRESIÓN LOGARÍTMICA AYER: Y = a + b * ln(X) ---
-    let aLineAyer = 0;
-    let bLineAyer = 0;
-    let regressionDataAyer: number[][] = [];
-    
-    if (validNotes.length > 2) {
-      const nTotal = validNotes.length;
+    // --- REGRESIÓN DINÁMICA ---
+    const calculateRegression = (dataItems: ProcessedNote[]) => {
+      if (dataItems.length < 2) return [];
+      const nTotal = dataItems.length;
       let sumLnX = 0, sumY = 0, sumLnXY = 0, sumLnX2 = 0;
-      let sumLnXAyer = 0, sumYAyer = 0, sumLnXYAyer = 0, sumLnX2Ayer = 0;
       
-      validNotes.forEach(n => {
-        // Data Hoy
+      dataItems.forEach(n => {
         const lnX = Math.log(n.daysToVto as number);
         const y = n.tem as number;
         sumLnX += lnX;
         sumY += y;
         sumLnXY += lnX * y;
         sumLnX2 += lnX * lnX;
-        
-        // Data Ayer
-        const lnXAyer = Math.log(n.diasAnterior as number);
-        const yAyer = n.temAnterior as number;
-        sumLnXAyer += lnXAyer;
-        sumYAyer += yAyer;
-        sumLnXYAyer += lnXAyer * yAyer;
-        sumLnX2Ayer += lnXAyer * lnXAyer;
       });
       
-      bLine = (nTotal * sumLnXY - sumLnX * sumY) / (nTotal * sumLnX2 - sumLnX * sumLnX);
-      aLine = (sumY - bLine * sumLnX) / nTotal;
+      const denominator = (nTotal * sumLnX2 - sumLnX * sumLnX);
+      if (Math.abs(denominator) < 0.00001) return []; // Evitar división por cero
+
+      const b = (nTotal * sumLnXY - sumLnX * sumY) / denominator;
+      const a = (sumY - b * sumLnX) / nTotal;
       
-      bLineAyer = (nTotal * sumLnXYAyer - sumLnXAyer * sumYAyer) / (nTotal * sumLnX2Ayer - sumLnXAyer * sumLnXAyer);
-      aLineAyer = (sumYAyer - bLineAyer * sumLnXAyer) / nTotal;
+      const points: number[][] = [];
+      const minX = Math.min(...dataItems.map(n => n.daysToVto as number));
+      const maxX = Math.max(...dataItems.map(n => n.daysToVto as number));
+      const step = (maxX - minX) / 50;
       
-      const minDays = Math.min(...validNotes.map(n => n.daysToVto as number));
-      const maxDays = Math.max(...validNotes.map(n => n.diasAnterior as number));
-      
-      // Dibujar 50 puntos para las curvas suavizadas
-      const step = (maxDays - minDays) / 50;
-      for (let x = minDays; x <= maxDays; x += step) {
-        regressionData.push([x, aLine + bLine * Math.log(x)]);
-        regressionDataAyer.push([x, aLineAyer + bLineAyer * Math.log(x)]);
+      for (let x = minX; x <= maxX; x += step) {
+        if (x <= 0) continue;
+        points.push([x, a + b * Math.log(x)]);
       }
-      regressionData.push([maxDays, aLine + bLine * Math.log(maxDays)]);
-      regressionDataAyer.push([maxDays, aLineAyer + bLineAyer * Math.log(maxDays)]);
-    }
+      points.push([maxX, a + b * Math.log(maxX)]);
+      return points;
+    };
+
+    const notesNominal = validNotes.filter(n => getCategory(n).includes('CAP'));
+    const notesReal = validNotes.filter(n => getCategory(n).includes('CER'));
+
+    const regressionNominal = calculateRegression(notesNominal);
+    const regressionReal = calculateRegression(notesReal);
 
     return {
       backgroundColor: 'transparent',
-      textStyle: {
-        fontFamily: 'Inter, sans-serif'
-      },
+      textStyle: { fontFamily: 'Inter, sans-serif' },
       title: {
         text: 'Curva de Rendimientos (TEM)',
         left: '20px',
@@ -162,49 +144,34 @@ const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes, activeMarket }
       },
       legend: {
         type: 'scroll',
-        top: '20px',
-        right: '20px',
-        textStyle: { color: '#f0f0f0' },
-        icon: 'circle'
+        bottom: '5px',
+        left: 'center',
+        textStyle: { color: '#f0f0f0', fontSize: 10 },
+        icon: 'circle',
+        itemGap: 15
       },
       tooltip: {
         trigger: 'item',
-        backgroundColor: 'rgba(15, 15, 15, 0.9)',
+        backgroundColor: 'rgba(15, 15, 15, 0.95)',
         borderColor: 'rgba(255, 255, 255, 0.1)',
-        textStyle: {
-          color: '#f0f0f0'
-        },
+        textStyle: { color: '#f0f0f0' },
         padding: [10, 15],
         formatter: function (params: any) {
           const data = params.data;
           const days = data.value[0];
           const tem = data.value[1].toFixed(2);
           
-          if (!data.details.tasaDirecta) {
-             // Es un punto Fantasma de Ayer
-             const tea = data.details.tea?.toFixed(2) || '-';
-             return `
-              <div style="font-weight: 400; font-size: 14px; margin-bottom: 5px; color: #a0a0a0">
-                ${data.name}
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: #666;">
-                <div>Plazo T-1:</div> <div style="text-align: right; color: #999;">${days} días</div>
-                <div>TEM T-1:</div> <div style="text-align: right; color: #999;">${tem}%</div>
-                <div>TEA T-1:</div> <div style="text-align: right; color: #999;">${tea}%</div>
-              </div>
-            `;
-          }
+          if (!data.details) return null;
 
-          // Punto Actual
           const tea = data.details.tea?.toFixed(2) || '-';
           const directa = data.details.tasaDirecta?.toFixed(2) || '-';
-          const dif = data.details.variacionTEM;
+          const dif = data.details.variacionTEM || 0;
           const difColor = dif > 0 ? '#10b981' : (dif < 0 ? '#ef4444' : '#a0a0a0');
           const difSign = dif > 0 ? '+' : '';
 
           return `
             <div style="font-weight: 700; font-size: 14px; margin-bottom: 5px; color: ${data.itemStyle.color}">
-              ${data.name}
+              ${data.name} <span style="font-weight: 400; font-size: 11px; color: #666">(${data.details.tipo})</span>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; color: #a0a0a0;">
               <div>Plazo:</div> <div style="text-align: right; color: #fff;">${days} días</div>
@@ -219,8 +186,8 @@ const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes, activeMarket }
       grid: {
         left: '5%',
         right: '8%',
-        bottom: '10%',
-        top: '25%',
+        bottom: '15%',
+        top: '20%',
         containLabel: true
       },
       xAxis: {
@@ -228,94 +195,39 @@ const YieldCurveChart: React.FC<YieldCurveChartProps> = ({ notes, activeMarket }
         name: 'Días al Vencimiento',
         nameLocation: 'middle',
         nameGap: 30,
-        nameTextStyle: {
-          color: '#a0a0a0'
-        },
-        splitLine: {
-          show: true,
-          lineStyle: {
-            color: 'rgba(255, 255, 255, 0.05)',
-            type: 'dashed'
-          }
-        },
-        axisLabel: {
-          color: '#a0a0a0'
-        }
+        nameTextStyle: { color: '#a0a0a0' },
+        splitLine: { show: true, lineStyle: { color: 'rgba(255, 255, 255, 0.05)', type: 'dashed' } },
+        axisLabel: { color: '#a0a0a0' }
       },
       yAxis: {
         type: 'value',
-        scale: true, // Esto hace que el eje se adapte al mínimo y máximo de los datos
+        scale: true,
         name: 'TEM (%)',
-        nameTextStyle: {
-          color: '#a0a0a0',
-          padding: [0, 0, 0, 20]
-        },
-        splitLine: {
-          show: true,
-          lineStyle: {
-            color: 'rgba(255, 255, 255, 0.05)'
-          }
-        },
-        axisLabel: {
-          color: '#a0a0a0',
-          formatter: '{value}%'
-        }
+        nameTextStyle: { color: '#a0a0a0', padding: [0, 0, 0, 20] },
+        splitLine: { show: true, lineStyle: { color: 'rgba(255, 255, 255, 0.05)' } },
+        axisLabel: { color: '#a0a0a0', formatter: '{value}%' }
       },
       series: [
         ...activeScatterSeries,
         {
-          name: 'Regresión Logarítmica',
+          name: 'Regresión Nominal (CAPS)',
           type: 'line',
-          data: regressionData,
+          data: regressionNominal,
           smooth: true,
           zlevel: 1,
           showSymbol: false,
-          lineStyle: {
-            color: 'rgba(59, 130, 246, 0.6)', // Color accent-color o azul
-            width: 2,
-            type: 'dashed'
-          },
-          tooltip: {
-            show: false // No mostramos tooltip sobre la línea teórica para no confundir
-          }
+          lineStyle: { color: '#10b981', width: 2, type: 'dashed', opacity: 0.5 },
+          tooltip: { show: false }
         },
         {
-          name: 'Instrumentos (Ayer)',
-          type: 'scatter',
-          symbolSize: 8,
-          data: seriesAnteriorData,
-          zlevel: 1,
-          label: {
-            show: false,
-            formatter: '{b}',
-            position: 'right',
-            color: 'rgba(255, 255, 255, 0.2)',
-            fontSize: 9,
-            distance: 5
-          },
-          emphasis: {
-            focus: 'self',
-            scale: true,
-            label: {
-              color: 'rgba(255, 255, 255, 0.8)'
-            }
-          }
-        },
-        {
-          name: 'Regresión Día Anterior',
+          name: 'Regresión Real (CER)',
           type: 'line',
-          data: regressionDataAyer,
+          data: regressionReal,
           smooth: true,
-          zlevel: 0,
+          zlevel: 1,
           showSymbol: false,
-          lineStyle: {
-            color: 'rgba(255, 255, 255, 0.2)', 
-            width: 1,
-            type: 'dashed'
-          },
-          tooltip: {
-            show: false
-          }
+          lineStyle: { color: '#3b82f6', width: 2, type: 'dashed', opacity: 0.5 },
+          tooltip: { show: false }
         }
       ]
     };
