@@ -88,10 +88,15 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                 Spread % {getSortIcon('spread')}
               </th>
               <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('daysToVto')}>Días Vto. {getSortIcon('daysToVto')}</th>
-              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('precio_final_estimado')}>Monto Vto <br/>(T-1) {getSortIcon('precio_final_estimado')}</th>
-              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('tasaDirecta')}>Tasa<br/>Directa {getSortIcon('tasaDirecta')}</th>
+              
+              {/* Columnas de Bonos */}
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('residual_value')}>VR % {getSortIcon('residual_value')}</th>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('paridad')}>Paridad % {getSortIcon('paridad')}</th>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('intereses_corridos')}>Int. Corr. {getSortIcon('intereses_corridos')}</th>
+              
               <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('tem')}>TEM % {getSortIcon('tem')}</th>
-              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('tea')}>TEA % {getSortIcon('tea')}</th>
+              <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32, color: 'var(--accent-color)' }} onClick={() => requestSort('tea')}>TEA / TIR {getSortIcon('tea')}</th>
+              
               <th style={{ borderLeft: '1px solid var(--border-color)', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('v')}>
                 Volumen
               </th>
@@ -99,9 +104,6 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                 Volumen $ {getSortIcon('vol_monto')}
               </th>
               <th style={{ position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('q_op')}>Ops {getSortIcon('q_op')}</th>
-              <th style={{ textAlign: 'right', position: 'sticky', top: 0, backgroundColor: '#0a0a0a', zIndex: 32 }} onClick={() => requestSort('avgTicket')}>
-                Ticket Prom. {getSortIcon('avgTicket')}
-              </th>
             </tr>
             <tr style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.01)', cursor: 'default', position: 'sticky', top: '45px', zIndex: 31 }}>
               <th className="sticky-col" style={{ cursor: 'default', position: 'sticky', top: '45px', left: 0, backgroundColor: '#0a0a0a', zIndex: 40 }}></th>
@@ -114,9 +116,11 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
               <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
               <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
               <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
+              <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
               <th colSpan={2} style={{ borderLeft: '1px solid var(--border-color)', cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
               <th style={{ cursor: 'default', position: 'sticky', top: '45px', backgroundColor: '#0a0a0a', zIndex: 32 }}></th>
             </tr>
+
           </thead>
           
           {Object.entries(groupedNotes).map(([category, items]) => (
@@ -166,14 +170,19 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                         {(note as any).daysToVto !== null ? (note as any).daysToVto : '-'}
                       </td>
 
-                      {/* Monto Vto */}
-                      <td style={{ textAlign: 'center', fontWeight: 600 }}>
-                        {note.precio_final_estimado ? note.precio_final_estimado.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}
+                      {/* VR (Valor Residual) */}
+                      <td style={{ textAlign: 'center', color: note.residual_value ? '#fff' : 'var(--text-dim)' }}>
+                        {note.residual_value ? `${(note.residual_value * 100).toFixed(2)}%` : '-'}
                       </td>
 
-                      {/* Tasa Directa */}
-                      <td style={{ textAlign: 'center', fontWeight: 'bold', color: (note as any).tasaDirecta > 0 ? 'var(--success)' : 'var(--text-dim)' }}>
-                        {(note as any).tasaDirecta !== null ? `${(note as any).tasaDirecta.toFixed(2)}%` : '-'}
+                      {/* Paridad */}
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: note.paridad ? (note.paridad < 0.8 ? 'var(--success)' : '#fff') : 'var(--text-dim)' }}>
+                        {note.paridad ? `${(note.paridad * 100).toFixed(2)}%` : '-'}
+                      </td>
+
+                      {/* Intereses Corridos */}
+                      <td style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
+                        {note.intereses_corridos ? note.intereses_corridos.toFixed(4) : '-'}
                       </td>
 
                       {/* TEM */}
@@ -181,10 +190,12 @@ const NotesTable: React.FC<NotesTableProps> = ({ notes }) => {
                         {(note as any).tem !== null ? `${(note as any).tem.toFixed(2)}%` : '-'}
                       </td>
 
-                      {/* TEA */}
-                      <td style={{ textAlign: 'center', fontWeight: 'bold', color: (note as any).tea > 0 ? 'var(--success)' : 'var(--danger)' }}>
-                        {(note as any).tea !== null ? `${(note as any).tea.toFixed(2)}%` : '-'}
+                      {/* TEA / TIR */}
+                      <td style={{ textAlign: 'center', fontWeight: 'bold', color: (note.tea || note.tir) ? 'var(--success)' : 'var(--danger)' }}>
+                        {note.tea !== null ? `${note.tea.toFixed(2)}%` : 
+                         (note.tir !== null ? `${(note.tir * 100).toFixed(2)}%` : '-')}
                       </td>
+
 
                       {/* Volumen */}
                       <td style={{ borderLeft: '1px solid var(--border-color)', minWidth: '130px' }}>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import NotesTable from './NotesTable';
 import YieldCurveChart from './YieldCurveChart';
 import MarketHeatmap from './MarketHeatmap';
@@ -26,6 +26,11 @@ export interface BaseNote {
   tem?: number | null;
   tea?: number | null;
   vol_monto?: number | null;
+  tir?: number | null;
+  paridad?: number | null;
+  residual_value?: number | null;
+  intereses_corridos?: number | null;
+  currency?: string | null;
 }
 
 export interface ProcessedNote extends BaseNote {
@@ -46,9 +51,18 @@ interface MarketDashboardProps {
   externalBonds?: BaseNote[];
 }
 
+const CHART_GROUPS = [
+  { id: 'CAP', label: '$ CAP', types: ['LECAP', 'BONCAP'] },
+  { id: 'CER', label: 'CER', types: ['LECER', 'BONCER'] },
+  { id: 'LINKED', label: 'LINKED', types: ['LELINK', 'BONLINK', 'BONO LINKED'] },
+  { id: 'DOLARES', label: 'DÓLARES', types: ['BONO DOLARES', 'BONO DÓLARES', 'DOLARES', 'DÓLARES', 'BOPREAL', 'BONO USD', 'SOBERANO USD'] },
+  { id: 'OTROS', label: 'OTROS', types: [] }
+];
+
 const MarketDashboard: React.FC<MarketDashboardProps> = ({ externalNotes = [], externalBonds = [] }) => {
   const [activeMarket, setActiveMarket] = useState<'letras' | 'bonos'>('letras');
-  const [activeType, setActiveType] = useState<string | 'ALL'>('ALL');
+  const [activeChartGroup, setActiveChartGroup] = useState<string>('CAP');
+  const [activeMetric, setActiveMetric] = useState<'tem' | 'tea'>('tem');
 
 
   // Lógica de procesamiento de datos
@@ -57,7 +71,7 @@ const MarketDashboard: React.FC<MarketDashboardProps> = ({ externalNotes = [], e
     today.setHours(0, 0, 0, 0);
 
     return data.map(note => {      // Normalizamos la categoría a MAYÚSCULAS para la UI, pero el origen puede ser cualquier case
-      const categoriaRaw = (note.tipo_activo || 'OTROS').toLowerCase();
+      const categoriaRaw = (note.tipo_activo || 'OTROS').trim().toLowerCase();
       const categoria = categoriaRaw.toUpperCase();
       
       let montoVto = note.precio_final_estimado;
@@ -73,14 +87,21 @@ const MarketDashboard: React.FC<MarketDashboardProps> = ({ externalNotes = [], e
       let tasaDirecta = note.tasa_directa ?? null;
       let tem = note.tem ?? null;
       let tea = note.tea ?? null;
+      let tir = note.tir ?? null;
 
       let precioAnterior = null;
       let diasAnterior = null;
       let temAnterior = null;
       let teaAnterior = null;
 
-      // Cálculo de tasas si el backend no las provee (Cálculo Nominal Simple como Fallback)
-      if ((tasaDirecta === null || tem === null) && montoVto && note.c > 0 && daysToVto !== null && daysToVto > 0) {
+      // PRIORIDAD 1: TIR del Backend (Especial para Bonos Soberanos)
+      if (tir !== null) {
+        // La TIR suele venir como decimal (0.25 para 25%), la pasamos a porcentaje
+        tea = tir * 100;
+        tem = (Math.pow(1 + tir, 1 / 12) - 1) * 100;
+      }
+      // PRIORIDAD 2: Cálculo Nominal Simple como Fallback
+      else if ((tasaDirecta === null || tem === null) && montoVto && note.c > 0 && daysToVto !== null && daysToVto > 0) {
         const factor = montoVto / note.c;
         if (factor > 0) {
           if (tasaDirecta === null) tasaDirecta = (factor - 1) * 100;
@@ -88,6 +109,11 @@ const MarketDashboard: React.FC<MarketDashboardProps> = ({ externalNotes = [], e
           if (tea === null) tea = (Math.pow(factor, 365 / daysToVto) - 1) * 100;
         }
       }
+
+      // Si el resultado es exactamente 0 pero hay precio y plazo, probablemente sea un error de cálculo/placeholder
+      // Solo limpiamos si el cambio es 0 (indica que no hay movimiento/data)
+      if (tem === 0 && (daysToVto || 0) > 0 && note.c > 0 && note.pct_change === 0) tem = null;
+      if (tea === 0 && (daysToVto || 0) > 0 && note.c > 0 && note.pct_change === 0) tea = null;
 
       // Cálculo histórico y variaciones
       if (montoVto && note.c > 0 && (daysToVto || 0) > 0) {
@@ -125,33 +151,52 @@ const MarketDashboard: React.FC<MarketDashboardProps> = ({ externalNotes = [], e
   const processedNotes = useMemo(() => processData(externalNotes), [externalNotes]);
   const processedBonds = useMemo(() => processData(externalBonds), [externalBonds]);
 
+  // 1b. Todos los datos combinados para el gráfico (DEDUP por Símbolo)
+  const allProcessedNotes = useMemo(() => {
+    const combined = [...processedNotes, ...processedBonds];
+    const uniqueMap = new Map<string, ProcessedNote>();
+    
+    combined.forEach(n => {
+      const existing = uniqueMap.get(n.symbol);
+      // Priorizamos la versión que tenga tasas calculadas
+      if (!existing || ((existing.tem === null || existing.tem === 0) && n.tem !== null && n.tem !== 0)) {
+        uniqueMap.set(n.symbol, n);
+      }
+    });
+    
+    return Array.from(uniqueMap.values());
+  }, [processedNotes, processedBonds]);
+
   // 2. Tabla Fija por Mercado
   const activeTableNotes = useMemo(() => {
     return activeMarket === 'letras' ? processedNotes : processedBonds;
   }, [processedNotes, processedBonds, activeMarket]);
 
-  // 3. Tipos Dinámicos Disponibles para el Mercado Seleccionado
-  const availableTypes = useMemo(() => {
-    const types = Array.from(new Set(activeTableNotes.map(n => (n as any).categoria)));
-    return types.sort();
-  }, [activeTableNotes]);
-
-  // Reset de tipo activo al cambiar de mercado
-  useEffect(() => {
-    if (availableTypes.length > 0) {
-      if (activeMarket === 'letras' && availableTypes.includes('LECAP')) {
-        setActiveType('LECAP');
-      } else {
-        setActiveType(availableTypes[0]);
-      }
-    }
-  }, [activeMarket, availableTypes]);
-
-  // 4. Datos Filtrados para el Gráfico
+  // 3. Datos Filtrados para el Gráfico (Independiente del mercado de la tabla)
   const graphNotes = useMemo(() => {
-    if (activeType === 'ALL') return activeTableNotes;
-    return activeTableNotes.filter(n => (n as any).categoria === activeType);
-  }, [activeTableNotes, activeType]);
+    const group = CHART_GROUPS.find(g => g.id === activeChartGroup);
+    if (!group) return [];
+    
+    if (group.id === 'OTROS') {
+      const definedTypes = CHART_GROUPS.filter(g => g.id !== 'OTROS').flatMap(g => g.types);
+      return allProcessedNotes.filter(n => !definedTypes.includes((n as any).categoria));
+    }
+    
+    return allProcessedNotes.filter(n => {
+      const note = n as any;
+      const cat = (note.categoria || '').toUpperCase();
+      const symbol = (note.symbol || '').toUpperCase();
+      
+      // Si el grupo es DOLARES, aceptamos por moneda, sufijos D/C o Tickers Soberanos
+      if (group.id === 'DOLARES') {
+        const sovereignPrefixes = ['AL', 'GD', 'AE', 'BP', 'AO'];
+        if (sovereignPrefixes.some(p => symbol.startsWith(p))) return true;
+        if (note.currency === 'dolar' || symbol.endsWith('D') || symbol.endsWith('C')) return true;
+      }
+      
+      return group.types.some(t => t.toUpperCase() === cat);
+    });
+  }, [allProcessedNotes, activeChartGroup]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -196,39 +241,73 @@ const MarketDashboard: React.FC<MarketDashboardProps> = ({ externalNotes = [], e
             </button>
           </div>
 
-          {/* DYNAMIC TYPE SELECTOR FOR CHART */}
-          {availableTypes.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gráfico:</span>
-              <div className="glass" style={{ display: 'inline-flex', padding: '0.3rem', borderRadius: '0.75rem', gap: '0.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-                {availableTypes.map(type => (
-                  <button
-                    key={type}
-                    onClick={() => setActiveType(type)}
-                    style={{
-                      padding: '0.4rem 1rem',
-                      borderRadius: '0.5rem',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      transition: 'all 0.2s',
-                      backgroundColor: activeType === type ? 'rgba(255,255,255,0.1)' : 'transparent',
-                      color: activeType === type ? '#fff' : 'rgba(255,255,255,0.4)',
-                      border: activeType === type ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
+          {/* CHART GROUP SELECTOR */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gráfico:</span>
+            <div className="glass" style={{ display: 'inline-flex', padding: '0.3rem', borderRadius: '0.75rem', gap: '0.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+              {CHART_GROUPS.map(group => (
+                <button
+                  key={group.id}
+                  onClick={() => setActiveChartGroup(group.id)}
+                  style={{
+                    padding: '0.4rem 1rem',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    transition: 'all 0.2s',
+                    backgroundColor: activeChartGroup === group.id ? 'rgba(255,255,255,0.1)' : 'transparent',
+                    color: activeChartGroup === group.id ? '#fff' : 'rgba(255,255,255,0.4)',
+                    border: activeChartGroup === group.id ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {group.label}
+                </button>
+              ))}
             </div>
-          )}
+          </div>
+
+          {/* METRIC SELECTOR */}
+          <div className="glass" style={{ display: 'inline-flex', padding: '0.3rem', borderRadius: '0.75rem', gap: '0.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <button
+              onClick={() => setActiveMetric('tem')}
+              style={{
+                padding: '0.4rem 1rem',
+                borderRadius: '0.5rem',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                transition: 'all 0.2s',
+                backgroundColor: activeMetric === 'tem' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                color: activeMetric === 'tem' ? '#fff' : 'rgba(255,255,255,0.4)',
+                border: activeMetric === 'tem' ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent',
+                cursor: 'pointer'
+              }}
+            >
+              TEM / TIREM
+            </button>
+            <button
+              onClick={() => setActiveMetric('tea')}
+              style={{
+                padding: '0.4rem 1rem',
+                borderRadius: '0.5rem',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                transition: 'all 0.2s',
+                backgroundColor: activeMetric === 'tea' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                color: activeMetric === 'tea' ? '#fff' : 'rgba(255,255,255,0.4)',
+                border: activeMetric === 'tea' ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent',
+                cursor: 'pointer'
+              }}
+            >
+              TEA / TIREA
+            </button>
+          </div>
         </div>
       </div>
 
       {/* RE-ESTRUCTURANDO EL DATA BINDING AUTOMÁTICO */}
       <div className="w-full bg-[#111]/50 backdrop-blur-md rounded-xl border border-[#222] p-4 shadow-xl">
-        <YieldCurveChart notes={graphNotes} activeMarket={activeMarket} />
+        <YieldCurveChart notes={graphNotes} activeMarket={activeMarket} metric={activeMetric} />
       </div>
 
       <div className="flex-grow min-w-0">
